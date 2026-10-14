@@ -98,7 +98,6 @@
   .boxtitle { font-weight:700; margin-bottom:6px; }
   .key { color:#6ee7b7; word-break:break-all; font-size:12px; }
   .tablewrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; font-size:13px; }
-  th,td { padding:10px 8px; text-align:left; border-bottom:1px solid #1f2a44; }
   th { color:#8b93a7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
   .badge { padding:3px 8px; border-radius:999px; font-size:11px; font-weight:600; }
   .badge.active { background:rgba(110,231,183,.15); color:#6ee7b7; }

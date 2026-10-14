@@ -54,7 +54,6 @@
   h1 { font-size:clamp(26px,4vw,40px); margin:0 0 4px; font-weight:800; }
   .card { background:rgba(18,24,38,.6); border:1px solid #1f2a44; border-radius:12px; padding:18px; margin:16px 0; }
   .tablewrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; font-size:13px; }
-  th,td { padding:10px 8px; text-align:left; border-bottom:1px solid #1f2a44; }
   th { color:#8b93a7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
   .badge { padding:3px 8px; border-radius:999px; font-size:11px; font-weight:600; }
   .badge.reserved { background:rgba(250,204,21,.15); color:#facc15; }

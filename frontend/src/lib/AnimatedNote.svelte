@@ -120,14 +120,12 @@
 
   /* search */
   .demo-search { display:flex; flex-direction:column; gap:8px; }
-  .d-searchbar { display:flex; align-items:center; gap:4px; padding:8px 10px; background:#06090f; border:1px solid #161d2a; font-family:ui-monospace,monospace; font-size:12px; }
   .typed { color:#e2e8f0; animation: type 2.4s steps(13,end) infinite; overflow:hidden; white-space:nowrap; max-width:0; display:inline-block; }
   @keyframes type { 0%{max-width:0} 40%,80%{max-width:120px} 100%{max-width:0} }
   .caret { width:7px; height:13px; background:#4ade80; animation: blink .9s steps(2) infinite; }
   @keyframes blink { 50%{opacity:0} }
   .d-results { display:flex; flex-direction:column; gap:6px; }
   .d-row { display:flex; justify-content:space-between; gap:8px; padding:6px 8px; background:#06090f; font-size:11px; font-family:ui-monospace,monospace; color:#94a3b8; opacity:.4; transform:translateX(-6px); animation: rowin .6s ease forwards; }
-  .d-row.hot { color:#e2e8f0; border-left:2px solid #4ade80; }
   .d-row:nth-child(1){animation-delay:1.0s}
   .d-row:nth-child(2){animation-delay:1.4s}
   .d-row:nth-child(3){animation-delay:1.8s}

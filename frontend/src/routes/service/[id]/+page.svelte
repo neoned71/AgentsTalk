@@ -274,7 +274,6 @@
   .toolname { font-weight:700; font-size:14px; }
   .tooldesc { color:#8b93a7; font-size:12px; margin-top:2px; }
 
-  .invokecard { border-color:rgba(110,231,183,.25); }
   .payrow { display:flex; gap:10px; margin-top:8px; }
   .creditrow { display:flex; gap:10px; margin-top:10px; align-items:center; flex-wrap:wrap; }
   .credit { background:#a78bfa; color:#0b0f19; }
@@ -285,7 +284,6 @@
   .status { margin-top:10px; color:#6ee7b7; font-size:13px; }
 
   .box { background:#0e1320; border:1px solid #1f2a44; border-radius:10px; padding:12px; margin-top:12px; }
-  .box.ok { border-color:rgba(110,231,183,.4); }
   .boxtitle { font-weight:700; margin-bottom:6px; }
   .box pre { font-size:11px; color:#b4bcd0; white-space:pre-wrap; margin:6px 0; }
   .receiptgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }
@@ -298,7 +296,6 @@
   .econrow span { font-size:11px; color:#8b93a7; text-transform:uppercase; }
   .econrow b { font-size:15px; }
 
-  .note { margin:14px 0; padding:12px 14px; background:#0e1320; border:1px solid #1f2a44; font-size:12px; color:#94a3b8; line-height:1.5; }
   .note-id { display:block; font-family:ui-monospace,SFMono-Regular,monospace; font-size:10px; color:#4ade80; letter-spacing:.12em; margin-bottom:4px; }
   @media (max-width:720px) {
     .metagrid, .econrow, .receiptgrid { grid-template-columns:1fr 1fr; }

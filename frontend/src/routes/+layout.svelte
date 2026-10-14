@@ -133,7 +133,6 @@
     z-index: 20;
     background: rgba(5, 7, 10, .86);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid #141b26;
   }
   .sitebar-inner {
     max-width: 1240px;
@@ -164,7 +163,6 @@
   .site-actions { display: flex; align-items: center; gap: 8px; }
   .user-chip { font-size: 12px; color: #b9c3d1; background: #0f1624; padding: 7px 11px; border-radius: 999px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ghost { background: transparent; color: #b9c3d1; border: 1px solid #1f2937; padding: 7px 11px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-  .ghost:hover { border-color: #4ade80; color: #4ade80; }
   .login-btn { background: #4ade80; color: #04120a; padding: 8px 13px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
   @media (max-width: 860px) {
     .sitebar-inner { grid-template-columns: auto auto; }
@@ -173,7 +171,6 @@
   }
 
   .site-footer {
-    border-top: 1px solid #141b26;
     background: #040609;
     padding: 28px 24px 32px;
   }
