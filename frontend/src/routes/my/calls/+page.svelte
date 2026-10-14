@@ -1,5 +1,6 @@
 <!-- src/routes/my/calls/+page.svelte -->
 <script>
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let receipts = $state([]);
   let loading = $state(true);
@@ -21,10 +22,7 @@
 <div class="container">
   <h1>My calls</h1>
   <p class="muted">Credit-based calls and their receipt status. Failed calls void the receipt and restore credits.</p>
-  <div class="note">
-    <span class="note-id">HOW IT WORKS</span>
-    <span>Each row is a receipt created when you invoked a service using credits. <code>reserved</code> = credits held, awaiting finalization. <code>consumed</code> = call succeeded, funds moved to provider escrow (30-day hold). <code>voided</code> = call failed, credits refunded. Direct x402/wallet calls are not listed here.</span>
-  </div>
+  <AnimatedNote variant="receipt" title="HOW MY CALLS WORK" note="Rows are receipts created when you invoked with credits. reserved = credits held; consumed = call succeeded and funds in escrow; voided = call failed and refunded. Direct x402 calls are not listed here." />
   {#if loading}<div class="skel"></div>
   {:else if error}<p class="warn">{error}</p>
   {:else if receipts.length === 0}

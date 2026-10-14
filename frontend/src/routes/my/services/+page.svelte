@@ -1,5 +1,6 @@
 <!-- src/routes/my/services/+page.svelte -->
 <script>
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let publishers = $state([]);
   let services = $state([]);
@@ -32,10 +33,7 @@
     <a class="btn" href="/publish">+ Publish</a>
   </div>
   <p class="muted">Services owned by your publishers.</p>
-  <div class="note">
-    <span class="note-id">HOW IT WORKS</span>
-    <span>Publishers bind your account to a verified domain and a USDC receive wallet. Every service attached to a publisher is searchable: name, description, and tool schemas are embedded and indexed. You can publish, edit, or pause from the Publish page; payouts accrue after the 30-day escrow window.</span>
-  </div>
+  <AnimatedNote variant="service" title="HOW MY SERVICES WORK" note="Publishers bind your account to a domain and USDC receive wallet; services are indexed (name/description/schemas) and discoverable. Payouts accrue after the 30-day escrow window." />
   {#if loading}<div class="skel"></div>
   {:else if error}<p class="warn">{error}</p>
   {:else if publishers.length === 0}

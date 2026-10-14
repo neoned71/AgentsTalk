@@ -1,5 +1,6 @@
 <!-- src/routes/publish/+page.svelte -->
 <script>
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let domain = $state(''); let wallet = $state(''); let name = $state('');
   let description = $state(''); let endpoint = $state('');
@@ -52,10 +53,7 @@
 <div class="container">
   <h1>Publish a service</h1>
   <p class="muted">List an MCP service so agents can discover, pay, and call it.</p>
-  <div class="note">
-    <span class="note-id">HOW IT WORKS</span>
-    <span>Step 1 creates a publisher bound to your account (domain + USDC wallet). Step 2 publishes the service manifest: name, description (used for vector search), MCP endpoint, price per call in USDC atomic units, and tool schemas. “Import from .well-known” fetches `/.well-known/mcp.json` / `agentshub.json` to verify domain ownership and prefill drafts. Prices are in the smallest USDC unit (6 decimals: 1,000,000 = 1 USDC).</span>
-  </div>
+  <AnimatedNote variant="publish" title="HOW PUBLISHING WORKS" note="Step 1 creates a publisher bound to your account (domain + USDC wallet). Step 2 publishes the manifest: name, description (vector search), MCP endpoint, price per call (atomic USDC) and tool schemas. “Import from .well-known” verifies domain ownership and prefills drafts." />
 
   <div class="card">
     <h3>1. Provider identity</h3>

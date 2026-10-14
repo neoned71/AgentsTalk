@@ -1,6 +1,7 @@
 <!-- src/routes/discover/+page.svelte -->
 <script>
   import { page } from '$app/stores';
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let q = $derived($page.url.searchParams.get('q') || '');
   let query = $state('');
@@ -76,10 +77,7 @@
 <div class="container">
   <h1>Discover services</h1>
   <p class="muted">Exact matches first, then semantically similar. Auto-pinged for latency. Choose fastest or cheapest.</p>
-  <div class="note">
-    <span class="note-id">HOW IT WORKS</span>
-    <span>The hub embeds your query (Gemini/Ollama) and ranks exact name/ID hits first, then cosine-similar services above 0.25. Each result is pinged in parallel to measure reachability and latency; FASTEST sorts by ping then price, CHEAPEST by price only. Logged-out visitors are redirected to login before any result is shown.</span>
-  </div>
+  <AnimatedNote variant="search" title="HOW SEARCH WORKS" note="Embeds the query, ranks exact name/ID hits first, then cosine-similar services above 0.25. Each result is pinged in parallel for reachability/latency; FASTEST sorts by ping then price, CHEAPEST by price only." />
 
   <div class="searchbar">
     <input class="sinput" bind:value={query} placeholder="Try: summarize url, translate text..." onkeydown={(e)=>e.key==='Enter' && search()} />

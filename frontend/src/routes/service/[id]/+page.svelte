@@ -1,5 +1,6 @@
 <!-- src/routes/service/[id]/+page.svelte (polished invoke flow) -->
 <script>
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let { data } = $props();
 
@@ -131,10 +132,7 @@
         <div class="crumbs"><a href="/">← Back</a></div>
         <h1>{service.name}</h1>
         <p class="muted">{service.description}</p>
-        <div class="note">
-          <span class="note-id">HOW IT WORKS</span>
-          <span>The MCP endpoint is what your agent/client calls. Price is atomic USDC per call. “Get 402 challenge” returns exact payment requirements; a settled tx hash lets you invoke. “Pay with credits” reserves a receipt (deducts credits), then consumes it only if the call succeeds; on failure the receipt is voided and credits restored. Wallet mode uses x402.</span>
-        </div>
+        <AnimatedNote variant="receipt" title="HOW INVOCATION WORKS" note="Endpoint is what your agent calls; price is atomic USDC per call. “Get 402 challenge” returns exact payment requirements; a settled tx hash lets you invoke. “Pay with credits” reserves a receipt, then consumes only on success and restores credits on failure. Wallet mode uses x402." />
       </div>
       <div class="pricecard">
         <div class="price">{service.currency} {(service.price_atomic/1e6).toFixed(6)}</div>

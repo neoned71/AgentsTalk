@@ -1,5 +1,6 @@
 <!-- src/routes/credits/+page.svelte -->
 <script>
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let balance = $state(0);
   let currency = $state('USDC');
@@ -37,10 +38,7 @@
 <div class="container">
   <h1>Credits</h1>
   <p class="muted">Pre-fund your account to use the web UI flow (receipts). Top-up is a demo action in this build.</p>
-  <div class="note">
-    <span class="note-id">HOW IT WORKS</span>
-    <span>Credits are held in your account balance. “Pay with credits” on a service reserves a receipt: the price is deducted and locked. If the call succeeds, the receipt is consumed and 98% accrues to the provider (held 30 days in escrow). If it fails, the receipt is voided and credits returned. This keeps funds safe without wallet signatures for every call.</span>
-  </div>
+  <AnimatedNote variant="credits" title="HOW CREDITS WORK" note="Credits are held in your account balance. “Pay with credits” reserves a receipt (price deducted/locked). On success it is consumed and 98% accrues to provider (30-day escrow). On failure it is voided and credits returned." />
   {#if loading}<div class="skel"></div>
   {:else if error}<p class="warn">{error}</p>
   {:else}

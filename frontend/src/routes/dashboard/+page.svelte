@@ -1,5 +1,6 @@
 <script>
   import { page } from '$app/stores';
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let q = $derived($page.url.searchParams.get('q') || '');
   let searchQuery = $state('');
@@ -83,6 +84,8 @@
   </header>
 
   {#if error}<div class="banner">{error}</div>{/if}
+
+  <AnimatedNote variant="escrow" title="HOW THIS DASHBOARD WORKS" note="Search first: results stay at top. KPIs, payouts, and recent calls appear once you’ve searched. Each call is held in 30-day escrow before releasing 98% to the provider (minus 2% platform fee). Payouts run hourly." />
 
   {#if q || searchResults.length}
     <section class="block">

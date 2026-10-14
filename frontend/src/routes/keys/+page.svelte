@@ -1,5 +1,6 @@
 <!-- src/routes/keys/+page.svelte -->
 <script>
+  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let keys = $state([]);
   let name = $state('agent-1');
@@ -42,10 +43,7 @@
 <div class="container">
   <h1>API Keys</h1>
   <p class="muted">Scoped keys for agents. Pass as <code>Authorization: Bearer ah_...</code> to call the hub programmatically.</p>
-  <div class="note">
-    <span class="note-id">HOW IT WORKS</span>
-    <span>Create a key with an optional spend limit (atomic USDC). The key maps to your account, so spend caps and revocation are enforced server-side. Agents use the key as a Bearer token to search, publish, or invoke. Revoking a key stops further calls immediately; in-flight calls complete under their reserved receipt.</span>
-  </div>
+  <AnimatedNote variant="keys" title="HOW API KEYS WORK" note="Create a key with an optional spend limit (atomic USDC). The key maps to your account, so caps and revocation are enforced server-side. Agents use it as a Bearer token; revoking stops further calls." />
   <div class="card">
     <h3>Create a key</h3>
     <input class="input" bind:value={name} placeholder="key name" />
