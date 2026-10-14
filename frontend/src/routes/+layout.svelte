@@ -27,16 +27,17 @@
       if (r.ok) user = await r.json();
       else user = null;
     } catch (e) { user = null; }
-    finally { checked = true; }
+    finally {
+      checked = true;
+      const path = $page.url.pathname;
+      const pub = path === '/' || path === '/login';
+      if (!user && !pub) goto('/login');
+    }
   }
 
-  $effect(() => { loadMe(); });
-
   $effect(() => {
-    if (!checked) return;
-    const path = $page.url.pathname;
-    const pub = path === '/' || path === '/login';
-    if (!user && !pub) goto('/login');
+    $page.url.pathname;
+    loadMe();
   });
 
   async function logout() {
