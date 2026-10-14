@@ -1,6 +1,5 @@
 <script>
   import { page } from '$app/stores';
-  import AnimatedNote from '$lib/AnimatedNote.svelte';
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let q = $derived($page.url.searchParams.get('q') || '');
   let searchQuery = $state('');
@@ -14,6 +13,55 @@
   let error = $state(null);
   let releasing = $state(false);
   let lastRefresh = $state(null);
+  let publishers = $state([]);
+  let services = $state([]);
+  let servicesLoading = $state(false);
+  let publisherDomain = $state('');
+  let publisherWallet = $state('');
+  let publisherId = $state('');
+  let serviceName = $state('');
+  let serviceDescription = $state('');
+  let serviceEndpoint = $state('');
+  let servicePrice = $state('1000');
+  let createStatus = $state('');
+  let createError = $state(null);
+  let creatingPublisher = $state(false);
+  let publishingService = $state(false);
+
+  async function loadPublishers() {
+    servicesLoading = true;
+    try {
+      const r = await fetch(`${API}/publishers/mine`, { credentials: 'include' });
+      const data = await r.json().catch(() => []);
+      publishers = Array.isArray(data) ? data : [];
+      if (publisherId && !publishers.some((p) => p.id === publisherId)) publisherId = '';
+      if (!publisherId && publishers.length) publisherId = publishers[0].id;
+    } catch (e) {
+      publishers = [];
+    } finally {
+      servicesLoading = false;
+    }
+  }
+
+  async function loadServices() {
+    if (!publishers.length) { services = []; return; }
+    servicesLoading = true;
+    try {
+      const groups = await Promise.all(
+        publishers.map(async (publisher) => {
+          const r = await fetch(`${API}/services?publisher_id=${encodeURIComponent(publisher.id)}`, { credentials: 'include' });
+          const data = await r.json().catch(() => []);
+          const items = Array.isArray(data) ? data : [];
+          return items.map((service) => ({ ...service, publisherDomain: publisher.domain, publisherId: publisher.id, isMine: true }));
+        })
+      );
+      services = groups.flat();
+    } catch (e) {
+      services = [];
+    } finally {
+      servicesLoading = false;
+    }
+  }
 
   async function load() {
     loading = true; error = null;
@@ -24,6 +72,8 @@
       ]);
       payouts = Array.isArray(p) ? p : [];
       calls = Array.isArray(c) ? c : [];
+      await loadPublishers();
+      await loadServices();
       lastRefresh = new Date();
     } catch (e) { error = e?.message || 'Failed to load'; }
     finally { loading = false; }
@@ -36,6 +86,76 @@
       await load();
     } catch (e) { error = e?.message || 'Release failed'; }
     finally { releasing = false; }
+  }
+
+  async function createPublisher() {
+    createError = null; createStatus = '';
+    if (!publisherDomain || !publisherWallet) { createError = 'domain and wallet are required'; return; }
+    creatingPublisher = true;
+    try {
+      const r = await fetch(`${API}/publishers`, {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain: publisherDomain, wallet_address: publisherWallet, display_name: publisherDomain })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail || JSON.stringify(d));
+      publisherId = d.id;
+      createStatus = 'Publisher created.';
+      await loadPublishers();
+    } catch (e) { createError = e?.message || 'Publisher creation failed'; }
+    finally { creatingPublisher = false; }
+  }
+
+  async function importDomain() {
+    createError = null; createStatus = '';
+    if (!publisherDomain || !publisherWallet) { createError = 'domain and wallet are required'; return; }
+    creatingPublisher = true;
+    try {
+      const r = await fetch(`${API}/publishers/import-domain`, {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain: publisherDomain, wallet_address: publisherWallet })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail || JSON.stringify(d));
+      publisherId = d.publisher_id;
+      publisherDomain = d.domain || publisherDomain;
+      createStatus = `Domain imported. Verified: ${d.verified}. ${d.service_drafts?.length || 0} draft(s) found.`;
+      await loadPublishers();
+    } catch (e) { createError = e?.message || 'Domain import failed'; }
+    finally { creatingPublisher = false; }
+  }
+
+  async function publishService() {
+    createError = null; createStatus = '';
+    if (!publisherId) { createError = 'create or select a publisher first'; return; }
+    if (!serviceName || !serviceDescription || !serviceEndpoint) { createError = 'name, description, and endpoint are required'; return; }
+    publishingService = true;
+    try {
+      const r = await fetch(`${API}/services`, {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          publisher_id: publisherId,
+          name: serviceName,
+          description: serviceDescription,
+          mcp_endpoint: serviceEndpoint,
+          price_atomic: Number(servicePrice || 0),
+          tool_schemas: [],
+          manifest: {}
+        })
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.detail || JSON.stringify(d));
+      serviceName = '';
+      serviceDescription = '';
+      serviceEndpoint = '';
+      servicePrice = '1000';
+      createStatus = `Service published: ${d.id}`;
+      await loadServices();
+    } catch (e) { createError = e?.message || 'Publish failed'; }
+    finally { publishingService = false; }
   }
 
   $effect(() => { load(); });
@@ -85,7 +205,79 @@
 
   {#if error}<div class="banner">{error}</div>{/if}
 
-  <AnimatedNote variant="escrow" title="HOW THIS DASHBOARD WORKS" note="Search first: results stay at top. KPIs, payouts, and recent calls appear once you’ve searched. Each call is held in 30-day escrow before releasing 98% to the provider (minus 2% platform fee). Payouts run hourly." />
+  <section class="block" style="margin-top:0;">
+    <div class="block-head">
+      <div>
+        <h2>Your services</h2>
+        <p class="meta">{services.length} published · {publishers.length} publisher{publishers.length === 1 ? '' : 's'}</p>
+      </div>
+    </div>
+
+    <div class="service-create">
+      <div class="create-card">
+        <h3>Create publisher</h3>
+        <input class="input" bind:value={publisherDomain} placeholder="domain (e.g. example.com)" />
+        <div style="height:8px"></div>
+        <input class="input" bind:value={publisherWallet} placeholder="wallet address (USDC on Base)" />
+        <div style="height:12px"></div>
+        <div class="row">
+          <button class="btn" onclick={createPublisher} disabled={creatingPublisher}>{creatingPublisher ? 'Creating…' : 'Create publisher'}</button>
+          <button class="btn alt" onclick={importDomain} disabled={creatingPublisher}>{creatingPublisher ? 'Working…' : 'Import .well-known'}</button>
+        </div>
+        {#if publisherId}
+          <p class="muted small">active publisher: {publisherId}</p>
+        {/if}
+      </div>
+
+      <div class="create-card">
+        <h3>Create service</h3>
+        <select class="input" bind:value={publisherId} disabled={!publishers.length}>
+          {#if !publishers.length}<option value="">Create a publisher first</option>{/if}
+          {#each publishers as publisher}
+            <option value={publisher.id}>{publisher.domain}</option>
+          {/each}
+        </select>
+        <div style="height:8px"></div>
+        <input class="input" bind:value={serviceName} placeholder="service name" />
+        <div style="height:8px"></div>
+        <textarea class="input" rows="3" bind:value={serviceDescription} placeholder="description (used for search)"></textarea>
+        <div style="height:8px"></div>
+        <input class="input" bind:value={serviceEndpoint} placeholder="MCP endpoint URL" />
+        <div style="height:8px"></div>
+        <input class="input" bind:value={servicePrice} placeholder="price in USDC atomic (6 decimals)" />
+        <div style="height:12px"></div>
+        <button class="btn" onclick={publishService} disabled={publishingService || !publisherId}>{publishingService ? 'Publishing…' : 'Publish service'}</button>
+      </div>
+    </div>
+
+    {#if createError}<p class="warn">{createError}</p>{/if}
+    {#if createStatus}<p class="muted small">{createStatus}</p>{/if}
+
+    {#if servicesLoading}
+      <div class="loading">Loading services…</div>
+    {:else if services.length === 0}
+      <div class="empty">No services published yet. Create one above.</div>
+    {:else}
+      <div class="table">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Publisher</th><th>Price</th><th>Description</th><th>Currency</th></tr>
+          </thead>
+          <tbody>
+            {#each services as service}
+              <tr>
+                <td class="mono">{service.name}</td>
+                <td class="meta">{service.publisherDomain || service.publisherId.slice(0,8) + '…'}</td>
+                <td class="amount">{(service.price_atomic / 1e6).toFixed(6)} <span class="unit">{service.currency}</span></td>
+                <td class="meta service-desc">{service.description}</td>
+                <td class="mono">{service.chain}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    {/if}
+  </section>
 
   {#if q || searchResults.length}
     <section class="block">
@@ -290,5 +482,22 @@
     .metrics { grid-template-columns:repeat(2,1fr); }
     .head { align-items:flex-start; }
     .search { width:100%; }
+  }
+
+  .service-create { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-bottom:18px; }
+  .create-card { background:#0f1624; border:1px solid #162033; border-radius:12px; padding:18px; }
+  .create-card h3 { margin:0 0 12px; font-size:16px; }
+  .create-card .input { width:100%; box-sizing:border-box; background:#050a13; color:#e2e8f0; border:1px solid #1f2937; border-radius:8px; padding:10px 12px; }
+  .create-card textarea.input { resize:vertical; min-height:84px; }
+  .create-card .row { display:flex; gap:8px; flex-wrap:wrap; }
+  .create-card .btn { background:#4ade80; color:#04120a; border:0; padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer; }
+  .create-card .btn.alt { background:#1d283a; color:#e2e8f0; }
+  .create-card .btn:disabled { opacity:.55; cursor:default; }
+  .create-card .muted { color:#8b95a5; font-size:12px; }
+  .create-card .small { margin:10px 0 0; }
+  .warn { color:#fca5a5; font-size:13px; margin:8px 0; }
+  .service-desc { max-width:340px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  @media (max-width: 860px) {
+    .service-create { grid-template-columns:1fr; }
   }
 </style>
