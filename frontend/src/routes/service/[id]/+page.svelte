@@ -256,16 +256,16 @@
   .head { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap; margin-bottom:20px; }
   .crumbs a { color:#6ee7b7; text-decoration:none; font-size:13px; }
   h1 { margin:6px 0 6px; font-size:clamp(26px,4vw,40px); font-weight:800; letter-spacing:-0.02em; }
-  .pricecard { background:rgba(18,24,38,.7); border:1px solid #1f2a44; border-radius:12px; padding:16px 20px; text-align:right; }
+  .pricecard { background:rgba(18,24,38,.7); border-radius:12px; padding:16px 20px; text-align:right; }
   .price { font-size:26px; font-weight:800; background:linear-gradient(90deg,#6ee7b7,#60a5fa); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .pricelbl { font-size:12px; color:#8b93a7; }
 
   .metagrid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
-  .meta { background:rgba(18,24,38,.5); border:1px solid #1f2a44; border-radius:10px; padding:12px; }
+  .meta { background:rgba(18,24,38,.5); border-radius:10px; padding:12px; }
   .metak { font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:#8b93a7; }
   .metav { font-size:15px; font-weight:600; margin-top:4px; }
 
-  .card { background:rgba(18,24,38,.6); border:1px solid #1f2a44; border-radius:12px; padding:18px; margin:14px 0; }
+  .card { background:rgba(18,24,38,.6); border-radius:12px; padding:18px; margin:14px 0; }
   .cardhead { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .card h3 { margin:0; font-size:16px; }
   .endpoint { display:block; background:#0e1320; padding:10px 12px; border-radius:8px; word-break:break-all; font-size:13px; color:#6ee7b7; }
@@ -277,13 +277,13 @@
   .payrow { display:flex; gap:10px; margin-top:8px; }
   .creditrow { display:flex; gap:10px; margin-top:10px; align-items:center; flex-wrap:wrap; }
   .credit { background:#a78bfa; color:#0b0f19; }
-  .input { background:#0e1320; color:#e6e9f0; border:1px solid #1f2a44; padding:10px 12px; border-radius:8px; flex:1; }
-  .btn { background:#6ee7b7; color:#0b0f19; border:none; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; white-space:nowrap; }
+  .input { background:#0e1320; color:#e6e9f0; padding:10px 12px; border-radius:8px; flex:1; }
+  .btn { background:#6ee7b7; color:#0b0f19; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; white-space:nowrap; }
   .btn:disabled { opacity:.6; cursor:default; }
-  .ghostbtn { background:transparent; color:#b4bcd0; border:1px solid #1f2a44; padding:5px 10px; border-radius:7px; cursor:pointer; font-size:12px; }
+  .ghostbtn { background:transparent; color:#b4bcd0; padding:5px 10px; border-radius:7px; cursor:pointer; font-size:12px; }
   .status { margin-top:10px; color:#6ee7b7; font-size:13px; }
 
-  .box { background:#0e1320; border:1px solid #1f2a44; border-radius:10px; padding:12px; margin-top:12px; }
+  .box { background:#0e1320; border-radius:10px; padding:12px; margin-top:12px; }
   .boxtitle { font-weight:700; margin-bottom:6px; }
   .box pre { font-size:11px; color:#b4bcd0; white-space:pre-wrap; margin:6px 0; }
   .receiptgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0; }

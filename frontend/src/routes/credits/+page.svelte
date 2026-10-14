@@ -59,10 +59,10 @@
 <style>
   .muted { color:#8b93a7; } .warn { color:#fca5a5; } .ok { color:#6ee7b7; }
   h1 { font-size:clamp(26px,4vw,40px); margin:0 0 4px; font-weight:800; }
-  .card { background:rgba(18,24,38,.6); border:1px solid #1f2a44; border-radius:12px; padding:18px; margin:14px 0; }
+  .card { background:rgba(18,24,38,.6); border-radius:12px; padding:18px; margin:14px 0; }
   .bal { font-size:40px; font-weight:800; background:linear-gradient(90deg,#6ee7b7,#60a5fa); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .input { background:#0e1320; color:#e6e9f0; border:1px solid #1f2a44; padding:10px 12px; border-radius:8px; width:100%; box-sizing:border-box; }
-  .btn { background:#6ee7b7; color:#0b0f19; border:none; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; }
+  .input { background:#0e1320; color:#e6e9f0; padding:10px 12px; border-radius:8px; width:100%; box-sizing:border-box; }
+  .btn { background:#6ee7b7; color:#0b0f19; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; }
   .skel { height:34px; background:linear-gradient(90deg,#121826,#1f2a44,#121826); background-size:200%; animation:shim 1.2s linear infinite; border-radius:8px; margin:10px 0; }
   @keyframes shim { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
   .container { max-width:720px; margin:0 auto; padding:0 24px; }

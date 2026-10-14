@@ -112,7 +112,7 @@
 </div>
 
 <style>
-  .anote { margin:16px 0 20px; padding:14px 16px; background:rgba(10,13,18,.6); border:1px solid #161d2a; border-radius:10px; }
+  .anote { margin:16px 0 20px; padding:14px 16px; background:rgba(10,13,18,.6); border-radius:10px; }
   .anote-id { font-family:ui-monospace,SFMono-Regular,monospace; font-size:10px; letter-spacing:.14em; color:#4ade80; margin-bottom:10px; }
 
   .demo { padding:6px 2px 2px; }

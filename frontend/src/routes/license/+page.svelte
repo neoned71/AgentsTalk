@@ -30,7 +30,7 @@ SOFTWARE.</pre>
   .container { max-width:960px; margin:0 auto; padding:0 24px; }
   h1 { font-size:32px; margin:0 0 6px; font-weight:600; letter-spacing:-.02em; }
   .muted { color:#6b768a; margin-bottom:18px; }
-  .card { background:#090c12; border:1px solid #161d2a; border-radius:12px; padding:18px; }
+  .card { background:#090c12; border-radius:12px; padding:18px; }
   .card p { margin:0 0 12px; color:#94a3b8; font-size:13px; line-height:1.6; }
   pre { margin:0; color:#94a3b8; font-size:11px; line-height:1.5; white-space:pre-wrap; font-family:ui-monospace,SFMono-Regular,monospace; }
 </style>

@@ -162,7 +162,7 @@
   .site-nav a.active { color: #4ade80; background: #0d1f18; }
   .site-actions { display: flex; align-items: center; gap: 8px; }
   .user-chip { font-size: 12px; color: #b9c3d1; background: #0f1624; padding: 7px 11px; border-radius: 999px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ghost { background: transparent; color: #b9c3d1; border: 1px solid #1f2937; padding: 7px 11px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+  .ghost { background: transparent; color: #b9c3d1; padding: 7px 11px; border-radius: 6px; cursor: pointer; font-size: 12px; }
   .login-btn { background: #4ade80; color: #04120a; padding: 8px 13px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
   @media (max-width: 860px) {
     .sitebar-inner { grid-template-columns: auto auto; }

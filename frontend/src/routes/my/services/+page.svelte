@@ -69,14 +69,14 @@
   .muted { color:#8b93a7; } .small { font-size:12px; } .warn { color:#fca5a5; }
   h1 { font-size:clamp(26px,4vw,40px); margin:0 0 4px; font-weight:800; }
   .row { display:flex; }
-  .btn { background:#6ee7b7; color:#0b0f19; border:none; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none; }
-  .card { background:rgba(18,24,38,.6); border:1px solid #1f2a44; border-radius:12px; padding:18px; margin:14px 0; }
+  .btn { background:#6ee7b7; color:#0b0f19; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none; }
+  .card { background:rgba(18,24,38,.6); border-radius:12px; padding:18px; margin:14px 0; }
   .cardhead { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .card h3 { margin:0; font-size:16px; }
   .tablewrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; font-size:13px; }
   th { color:#8b93a7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
   a { color:#6ee7b7; text-decoration:none; }
-  .ghostbtn { background:transparent; color:#b4bcd0; border:1px solid #1f2a44; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:12px; text-decoration:none; }
+  .ghostbtn { background:transparent; color:#b4bcd0; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:12px; text-decoration:none; }
   .empty { text-align:center; padding:40px 12px; color:#8b93a7; }
   .emptyico { font-size:32px; margin-bottom:8px; }
   .badge { padding:3px 8px; border-radius:999px; font-size:11px; font-weight:600; background:rgba(110,231,183,.15); color:#6ee7b7; }

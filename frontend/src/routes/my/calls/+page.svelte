@@ -52,7 +52,7 @@
 <style>
   .muted { color:#8b93a7; } .small { font-size:12px; } .warn { color:#fca5a5; } .mono { font-family:ui-monospace,monospace; }
   h1 { font-size:clamp(26px,4vw,40px); margin:0 0 4px; font-weight:800; }
-  .card { background:rgba(18,24,38,.6); border:1px solid #1f2a44; border-radius:12px; padding:18px; margin:16px 0; }
+  .card { background:rgba(18,24,38,.6); border-radius:12px; padding:18px; margin:16px 0; }
   .tablewrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; font-size:13px; }
   th { color:#8b93a7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
   .badge { padding:3px 8px; border-radius:999px; font-size:11px; font-weight:600; }

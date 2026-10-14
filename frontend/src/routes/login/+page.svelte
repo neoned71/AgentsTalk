@@ -96,17 +96,17 @@
 
 <style>
   .authwrap { display:flex; justify-content:center; padding:60px 24px; }
-  .authcard { background:rgba(18,24,38,.7); border:1px solid #1f2a44; border-radius:14px; padding:28px; width:100%; max-width:420px; }
+  .authcard { background:rgba(18,24,38,.7); border-radius:14px; padding:28px; width:100%; max-width:420px; }
   h1 { margin:0 0 6px; }
   .muted { color:#8b93a7; }
   .small { font-size:12px; }
   .tabs { display:flex; gap:6px; margin:16px 0; background:#0e1320; padding:4px; border-radius:8px; }
-  .tabs button { flex:1; background:transparent; color:#8b93a7; border:none; padding:8px; border-radius:6px; cursor:pointer; font-weight:600; }
+  .tabs button { flex:1; background:transparent; color:#8b93a7; padding:8px; border-radius:6px; cursor:pointer; font-weight:600; }
   .tabs button.active { background:#1f2a44; color:#e6e9f0; }
-  .input { background:#0e1320; color:#e6e9f0; border:1px solid #1f2a44; padding:10px 12px; border-radius:8px; width:100%; box-sizing:border-box; }
-  .btn { background:#6ee7b7; color:#0b0f19; border:none; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; width:100%; }
+  .input { background:#0e1320; color:#e6e9f0; padding:10px 12px; border-radius:8px; width:100%; box-sizing:border-box; }
+  .btn { background:#6ee7b7; color:#0b0f19; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; width:100%; }
   .btn:disabled { opacity:.6; cursor:default; }
-  .ghostbtn { background:transparent; color:#e6e9f0; border:1px solid #1f2a44; padding:10px 16px; border-radius:8px; cursor:pointer; width:100%; font-weight:600; }
+  .ghostbtn { background:transparent; color:#e6e9f0; padding:10px 16px; border-radius:8px; cursor:pointer; width:100%; font-weight:600; }
   .ghostbtn:disabled { opacity:.6; }
   .ghostbtn.full { width:100%; }
   .divider { text-align:center; color:#8b93a7; margin:14px 0; position:relative; }

@@ -89,12 +89,12 @@
 <style>
   .muted { color:#8b93a7; } .small { font-size:12px; } .warn { color:#fca5a5; } .mono { font-family:ui-monospace,monospace; }
   h1 { font-size:clamp(26px,4vw,40px); margin:0 0 4px; font-weight:800; }
-  .card { background:rgba(18,24,38,.6); border:1px solid #1f2a44; border-radius:12px; padding:18px; margin:14px 0; }
+  .card { background:rgba(18,24,38,.6); border-radius:12px; padding:18px; margin:14px 0; }
   .card h3 { margin:0 0 8px; font-size:16px; }
-  .input { background:#0e1320; color:#e6e9f0; border:1px solid #1f2a44; padding:10px 12px; border-radius:8px; width:100%; box-sizing:border-box; }
-  .btn { background:#6ee7b7; color:#0b0f19; border:none; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; }
-  .ghostbtn { background:transparent; color:#b4bcd0; border:1px solid #1f2a44; padding:5px 9px; border-radius:6px; cursor:pointer; font-size:12px; }
-  .box { background:#0e1320; border:1px solid #1f2a44; border-radius:10px; padding:12px; margin-top:12px; }
+  .input { background:#0e1320; color:#e6e9f0; padding:10px 12px; border-radius:8px; width:100%; box-sizing:border-box; }
+  .btn { background:#6ee7b7; color:#0b0f19; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; }
+  .ghostbtn { background:transparent; color:#b4bcd0; padding:5px 9px; border-radius:6px; cursor:pointer; font-size:12px; }
+  .box { background:#0e1320; border-radius:10px; padding:12px; margin-top:12px; }
   .boxtitle { font-weight:700; margin-bottom:6px; }
   .key { color:#6ee7b7; word-break:break-all; font-size:12px; }
   .tablewrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; font-size:13px; }

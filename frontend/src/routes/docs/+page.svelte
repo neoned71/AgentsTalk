@@ -42,7 +42,7 @@
   .container { max-width:960px; margin:0 auto; padding:0 24px; }
   h1 { font-size:32px; margin:0 0 6px; font-weight:600; letter-spacing:-.02em; }
   .muted { color:#6b768a; margin-bottom:18px; }
-  .card { background:#090c12; border:1px solid #161d2a; border-radius:12px; padding:18px; margin:12px 0; }
+  .card { background:#090c12; border-radius:12px; padding:18px; margin:12px 0; }
   .card h3 { margin:0 0 8px; font-size:15px; color:#4ade80; letter-spacing:.04em; text-transform:uppercase; }
   .card p { margin:0; color:#94a3b8; font-size:13px; line-height:1.6; }
   code { font-family:ui-monospace,SFMono-Regular,monospace; color:#4ade80; background:#05070a; padding:1px 5px; border-radius:4px; font-size:12px; }
