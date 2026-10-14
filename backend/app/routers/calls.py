@@ -6,7 +6,7 @@ import hashlib
 import json
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,15 +15,38 @@ from sqlalchemy import select, or_
 from app.auth import get_current_user
 from app.config import settings
 from app.db import get_session
-from app.models import Call, Service, User, Receipt, UserBalance, CreditTransaction
+from app.models import Call, Service, User, Receipt, UserBalance, CreditTransaction, ApiKey
 from app.schemas import CallRequest
 from app.services.x402 import X402Client, X402PaymentRequirements, escrow_release_at, developer_share, platform_fee
+
+
+
+async def _budget_charge_api_key(request: Request, session, amount: int) -> None:
+    auth = request.headers.get("authorization", "")
+    if not auth.lower().startswith("bearer "):
+        return
+    key = auth[7:].strip()
+    if not key.startswith("ak_"):
+        return
+    prefix = key[:11]
+    res = await session.execute(select(ApiKey).where(ApiKey.key_prefix == prefix, ApiKey.revoked.is_(False)))
+    ak = res.scalar_one_or_none()
+    if ak is None:
+        return
+    import hashlib
+    if hashlib.sha256(key.encode()).hexdigest() != ak.key_hash:
+        return
+    ak.spent_atomic = (ak.spent_atomic or 0) + amount
+    # enforce limit eagerly
+    if ak.spend_limit_atomic and ak.spent_atomic > ak.spend_limit_atomic:
+        # cancel transaction caller will handle; leave marked
+        raise HTTPException(402, "API key spend limit exceeded")
 
 router = APIRouter(prefix="/calls", tags=["calls"])
 
 
 @router.post("/invoke")
-async def invoke_service(body: CallRequest, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+async def invoke_service(request: Request, body: CallRequest, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     svc = await session.get(Service, uuid.UUID(body.service_id))
     if not svc or not svc.active:
         raise HTTPException(404, "service not found")
@@ -75,6 +98,7 @@ async def invoke_service(body: CallRequest, user: User = Depends(get_current_use
         # platform holds developer share in escrow (already collected from user credits on reservation)
         session.add(CreditTransaction(user_id=user.id, amount_atomic=0, kind="debit",
                                      reference=receipt.id and f"consume:{receipt.receipt_number}"))
+        await _budget_charge_api_key(request, session, svc.price_atomic)
         await session.commit()
         await session.refresh(call)
         return {
@@ -141,6 +165,7 @@ async def invoke_service(body: CallRequest, user: User = Depends(get_current_use
         escrow_release_at=escrow_release_at(),
     )
     session.add(call)
+    await _budget_charge_api_key(request, session, svc.price_atomic)
     await session.commit()
     await session.refresh(call)
 
