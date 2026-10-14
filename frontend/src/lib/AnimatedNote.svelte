@@ -1,6 +1,19 @@
 <!-- src/lib/AnimatedNote.svelte -->
 <script>
-  let { variant = 'flow', title = 'How it works', note = '' } = $props();
+  let { variant = 'flow', title = 'How it works', note = '', steps = [] } = $props();
+
+  const DEFAULT_STEPS = {
+    search: [{ title: 'Embed query' }, { title: 'Rank exact matches' }, { title: 'Rank similar (≥0.25)' }, { title: 'Ping + sort (fast/cheap)' }],
+    receipt: [{ title: 'Reserve receipt' }, { title: 'Invoke service' }, { title: 'Consume on success' }, { title: 'Void + refund on fail' }],
+    escrow: [{ title: 'Hold funds' }, { title: 'Wait 30 days' }, { title: 'Auto release' }, { title: 'Refund in window' }],
+    credits: [{ title: 'Top up balance' }, { title: 'Reserve receipt' }, { title: 'Consume on success' }, { title: 'Refund on fail' }],
+    keys: [{ title: 'Create key' }, { title: 'Set spend cap' }, { title: 'Agent authenticates' }, { title: 'Revoke anytime' }],
+    service: [{ title: 'Publish manifest' }, { title: 'Index (embed)' }, { title: 'Agents discover' }, { title: 'Pay + invoke' }],
+    publish: [{ title: 'Create publisher' }, { title: 'Verify domain' }, { title: 'Add service + price' }, { title: 'Go live in search' }],
+    flow: [{ title: 'Query' }, { title: 'Match' }, { title: 'Pay (x402/credits)' }, { title: 'Settle (escrow)' }],
+  };
+
+  let resolvedSteps = $derived(steps.length ? steps : (DEFAULT_STEPS[variant] || []));
 </script>
 
 <div class="anote">
@@ -78,6 +91,20 @@
         <span class="d-node">pay</span><span class="d-link"></span>
         <span class="d-node">settle</span>
       </div>
+    </div>
+  {/if}
+
+  {#if resolvedSteps.length}
+    <div class="d-steps">
+      {#each resolvedSteps as s, i}
+        <div class="step-row" style="animation-delay:{i * 0.12}s">
+          <span class="step-n">{String(i + 1).padStart(2, '0')}</span>
+          <div class="step-body">
+            <div class="step-title">{s.title}</div>
+            {#if s.detail}<div class="step-detail">{s.detail}</div>{/if}
+          </div>
+        </div>
+      {/each}
     </div>
   {/if}
 
@@ -177,4 +204,13 @@
   .d-link { width:18px; height:2px; background:#161d2a; position:relative; overflow:hidden; }
   .d-link::after { content:''; position:absolute; inset:0; background:#4ade80; animation: linkflow 1.6s linear infinite; transform:translateX(-100%); }
   @keyframes linkflow { 100%{transform:translateX(100%)} }
+
+  /* animated step list */
+  .d-steps { display:grid; grid-template-columns:1fr; gap:8px; margin-top:10px; }
+  .step-row { display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:center; padding:8px 10px; background:#06090f; border-radius:6px; opacity:0; transform:translateX(-8px); animation: stepin .45s ease forwards; }
+  @keyframes stepin { to { opacity:1; transform:translateX(0); } }
+  .step-n { font-family:ui-monospace,SFMono-Regular,monospace; font-size:11px; color:#4ade80; letter-spacing:.08em; }
+  .step-body { display:flex; flex-direction:column; gap:2px; }
+  .step-title { font-size:12px; color:#dbe4f0; font-weight:600; }
+  .step-detail { font-size:11px; color:#6b768a; }
 </style>
