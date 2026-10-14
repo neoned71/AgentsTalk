@@ -34,6 +34,7 @@ async def lifespan(app: FastAPI):
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
         await conn.run_sync(Base.metadata.create_all)
+        await conn.execute(text("ALTER TABLE services ADD COLUMN IF NOT EXISTS search_tsv TSVECTOR"))
         # Ensure full-text search trigger exists when bootstrapping from SQLAlchemy metadata
         await conn.execute(text("""
         CREATE OR REPLACE FUNCTION services_tsv_update() RETURNS trigger AS $$
