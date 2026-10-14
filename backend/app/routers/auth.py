@@ -13,11 +13,27 @@ from app.auth import (create_access_token, hash_password, verify_password, set_a
 from app.db import get_session
 from app.models import User, ApiKey
 
+
+
+from collections import defaultdict
+from time import time as _now
+_rate_buckets: dict[str, list[float]] = defaultdict(list)
+def _rate_limit(key: str, limit: int, window: int = 60):
+    now = _now()
+    b = _rate_buckets[key]
+    while b and b[0] < now - window:
+        b.pop(0)
+    if len(b) >= limit:
+        from fastapi import HTTPException
+        raise HTTPException(429, "too many requests")
+    b.append(now)
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", status_code=201)
-async def register(body: dict, response: Response, session: AsyncSession = Depends(get_session)):
+async def register(request: Request, body: dict, response: Response, session: AsyncSession = Depends(get_session)):
+    _rate_limit(f"register:{request.client.host}", 10)
     email = body.get("email")
     password = body.get("password")
     display_name = body.get("display_name") or email
@@ -36,7 +52,8 @@ async def register(body: dict, response: Response, session: AsyncSession = Depen
 
 
 @router.post("/login")
-async def login(body: dict, response: Response, session: AsyncSession = Depends(get_session)):
+async def login(request: Request, body: dict, response: Response, session: AsyncSession = Depends(get_session)):
+    _rate_limit(f"login:{request.client.host}", 10)
     email = body.get("email")
     password = body.get("password")
     if not email or not password:
@@ -64,6 +81,7 @@ async def me(user: User = Depends(get_current_user)):
 
 @router.post("/wallet/challenge")
 async def wallet_challenge(body: dict, request: Request, response: Response):
+    _rate_limit(f"challenge:{request.client.host}", 20)
     address = (body.get("address") or "").lower()
     if not address:
         raise HTTPException(400, "address required")
