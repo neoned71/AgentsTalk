@@ -10,6 +10,14 @@
   let loginRequired = $state(false);
   let activeTool = $state('mcp');
   let snippet = $state('Loading integration guide...');
+  let copied = $state(false);
+  async function copyGuide() {
+    try {
+      await navigator.clipboard.writeText(snippet);
+      copied = true;
+      setTimeout(() => (copied = false), 1600);
+    } catch (e) { copied = false; }
+  }
   const tools = [
     { id:'mcp', name:'MCP (Claude/Cursor/Cline)' },
     { id:'langchain', name:'LangChain' },
@@ -111,7 +119,21 @@
                 onclick={() => activeTool = t.id}>{t.name}</button>
       {/each}
     </div>
-    <pre class="integrate-code"><code>{snippet}</code></pre>
+
+    <div class="integrate-code-shell">
+      <div class="code-head">
+        <span class="code-title">{tools.find(t => t.id === activeTool)?.name || activeTool}</span>
+        <button class="copy-btn" type="button" onclick={copyGuide}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <pre class="integrate-code"><code>{snippet}</code></pre>
+    </div>
     <p class="integrate-note">
       Hosted guide: <code>docs/DOCUMENTATION.md</code> plus reproducible files under
       <code>frontend/static/integrations/&lt;tab&gt;.txt</code>.
@@ -480,7 +502,16 @@
   .tool-tab { border:0; background:#151b24; color:#b5c1cf; border-radius:999px;
                padding:7px 10px; font-size:11px; cursor:pointer; }
   .tool-tab.active { background:#4ade80; color:#07150d; font-weight:700; }
-  .integrate-code { background:#05070b; color:#d7e1ea; padding:14px; border-radius:10px;
+  .integrate-code-shell { background:#070a0f; border-radius:12px; padding:10px;
+                          overflow:hidden; }
+  .code-head { display:flex; justify-content:space-between; align-items:center;
+               padding:8px 10px 10px; color:#9ca7b8; font-size:11px; }
+  .code-title { letter-spacing:.08em; text-transform:uppercase; color:#5eead4; }
+  .copy-btn { display:flex; align-items:center; gap:6px; border:0; background:#171f2a;
+              color:#e5edf6; border-radius:8px; padding:6px 10px; font-size:11px;
+              cursor:pointer; }
+  .copy-btn:hover { background:#223041; }
+  .integrate-code { background:#040609; color:#d7e1ea; padding:14px; border-radius:10px;
                     overflow-x:auto; font-size:12px; line-height:1.45; margin:0; }
   .integrate-code code { font-family:ui-monospace,SFMono-Regular,monospace; }
   .integrate-note { color:#8b93a7; font-size:12px; margin-top:10px; }
