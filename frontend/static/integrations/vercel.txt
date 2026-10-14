@@ -1,4 +1,3 @@
-// Vercel AI SDK (TypeScript/Next.js)
 import { generateText, tool } from "ai";
 import { z } from "zod";
 
@@ -29,5 +28,3 @@ const invokeTool = tool({
     body: JSON.stringify({ service_id, agent_id: "vercel-agent", request_payload })
   })).json()
 });
-
-// Pass tools to streamText/generateText via `tools` option.

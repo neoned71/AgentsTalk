@@ -1,4 +1,3 @@
-// FastAPI host that proxies to AgentTalk
 from fastapi import Body, HTTPException
 import httpx, os
 HUB=os.environ["AGENTTALK_BASE"]; KEY=os.environ["AGENTTALK_KEY"]

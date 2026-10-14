@@ -1,4 +1,3 @@
-// OpenAI Agents / Chat Completions function calling
 const base = process.env.AGENTTALK_BASE;
 const key = process.env.AGENTTALK_KEY;
 
@@ -12,7 +11,6 @@ async function agenttalkFetch(path, payload) {
   return r.json();
 }
 
-// tool definitions consumed by chat completions or Agents SDK
 const tools = [
   {
     type: "function",
@@ -42,4 +40,3 @@ const tools = [
     }
   }
 ];
-// Call tool handlers map to endpoints /search and /calls/invoke.

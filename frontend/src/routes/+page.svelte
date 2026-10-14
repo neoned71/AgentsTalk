@@ -11,6 +11,21 @@
   let activeTool = $state('mcp');
   let snippet = $state('Loading integration guide...');
   let copied = $state(false);
+
+  const guides = [
+    { id: 'mcp', name: 'Claude / Cursor / Cline / Windsurf', description: 'Discover and expose a provider MCP endpoint through npx mcp-remote.', steps: ['Install the bridge: npm i -g mcp-remote', 'Search using /search and inspect the result payload.', 'Copy the selected service mcp_endpoint value.', 'Add it to your editor MCP JSON config.', 'Restart the editor and test tools/list / tools/call.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY or personal wallet' },
+    { id: 'langchain', name: 'LangChain', description: 'Define search and invoke helpers, then wrap them as @tool.', steps: ['Set AGENTTALK_BASE and AGENTTALK_KEY environment variables.', 'Create reusable get_services/search and invoke functions.', 'Wrap them with the LangChain decorator or tool function.', 'Attach tools to the agent or chat chain.', 'Handle 402 responses for x402 wallet branch.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
+    { id: 'openai', name: 'OpenAI Agents / Function Calling', description: 'Expose search and invoke as JSON function tools.', steps: ['Publish the function tool schemas for search and invoke.', 'Route tool calls through /search or /calls/invoke.', 'Normalize payment required 402 responses for the frontend/user.', 'Map results back to model final state.', 'Use key scopes and spend caps for safety.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
+    { id: 'autogen', name: 'AutoGen', description: 'Expose callable helpers and register them with AssistantAgent.', steps: ['Implement search_services and invoke_service in Python.', 'Register them as helper tools.', 'Add exception handling for invalid service IDs.', 'Use /routing/probe to sort low-latency providers.', 'Validate refunds and escrow intent separately.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
+    { id: 'crewai', name: 'CrewAI', description: 'Create task tools that search and invoke services.', steps: ['Create API access helpers using crewai @tool.', 'Assign tools to agents according to roles.', 'Use search output to select provider.', 'Invoke with structured request_payload.', 'Log call IDs and endpoints for audit.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
+    { id: 'llamaindex', name: 'LlamaIndex', description: 'Convert search and invoke functions into FunctionTool instances.', steps: ['Create search_tool using FunctionTool.from_defaults.', 'Create invoke_tool with typed payload.', 'Register both in a QueryEngine or agent.', 'Use results as tool context returned to the user.', 'Inspect returned call_id after invocation.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
+    { id: 'vercel', name: 'Vercel AI SDK', description: 'Wire search and invoke in TypeScript tool definitions.', steps: ['Install ai and zod.', 'Define parameters with valid schema.', 'Fetch results for /search and /calls/invoke.', 'Pass tools into generateText or streamText.', 'Add server-side env and secret management.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
+    { id: 'n8n', name: 'n8n', description: 'Use Header Auth and HTTP nodes to automate discovery and calls.', steps: ['Create an HTTP credential with Authorization header.', 'Search in one request node.', 'Extract service_id using a Function node.', 'Call /calls/invoke for execution.', 'Branch on 402 for wallet payments.'] , env: 'HUB URL, API token' },
+    { id: 'curl', name: 'HTTP / curl', description: 'Use shell and any HTTP client in any language.', steps: ['Export HUB and KEY environment variables.', 'List service candidates with search.', 'Record candidate service_id.', 'Invoke and inspect returned endpoint.', 'Productize with retry and key budgeting.'] , env: 'HUB, KEY' },
+    { id: 'fastapi', name: 'FastAPI proxy', description: 'Wrap AgentTalk behind your own backend.', steps: ['Load HUB and KEY from environment.', 'Implement a gateway route.', 'Forward payload as request_payload.', 'Return JSON result to callers.', 'Handle payment required properly.'] , env: 'HUB, KEY' }
+  ];
+  const guide = $derived(guides.find(g => g.id === activeTool) ?? guides[0]);
+
   async function copyGuide() {
     try {
       await navigator.clipboard.writeText(snippet);
@@ -119,6 +134,17 @@
                 onclick={() => activeTool = t.id}>{t.name}</button>
       {/each}
     </div>
+
+    <section class="guide-card">
+      <h3>{guide?.name}</h3>
+      <p class="guide-desc">{guide?.description}</p>
+      <ol class="guide-steps">
+        {#each guide?.steps ?? [] as step}
+          <li>{step}</li>
+        {/each}
+      </ol>
+      <p class="guide-env"><strong>Required:</strong> {guide()?.env}</p>
+    </section>
 
     <div class="integrate-code-shell">
       <div class="code-head">
@@ -496,6 +522,11 @@
 
   .integrate { background:#0d1117; border-radius:12px; padding:16px; margin:18px 0 0;
                 border:0; }
+  .guide-card { background:#101620; border-radius:12px; padding:14px; margin:12px 0; }
+  .guide-card h3 { margin:0 0 4px; font-size:15px; color:#5eead4; }
+  .guide-desc { color:#b8c3d0; font-size:12px; margin:0 0 8px; }
+  .guide-steps { margin:0; padding-inline-start:20px; color:#dbe6f0; font-size:12px; line-height:1.5; }
+  .guide-env { font-size:11px; color:#8a95a4; margin-top:8px; }
   .integrate-head { color:#4ade80; font-size:11px; letter-spacing:.1em;
                     text-transform:uppercase; font-weight:700; margin-bottom:10px; }
   .tool-tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }

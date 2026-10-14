@@ -1,4 +1,3 @@
-// Microsoft AutoGen integration
 import requests
 BASE = "https://api.agenttalk-host"
 KEY = "ak_..."
@@ -16,8 +15,3 @@ def invoke_service(service_id, payload, agent_id="autogen"):
               "request_payload": payload})
     r.raise_for_status()
     return r.json()
-
-# Register helper functions on your AssistantAgent:
-# summarize_url = lambda url: ...
-# Translate = chain of discover + invoke
-# Use probe "/routing/probe" to pick fastest provider when multiple

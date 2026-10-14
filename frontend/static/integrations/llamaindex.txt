@@ -1,4 +1,3 @@
-// LlamaIndex integration (Python)
 from llama_index.core.tools import FunctionTool
 import requests, os
 
@@ -17,4 +16,3 @@ def invoke(service_id: str, payload: dict):
 
 search_tool = FunctionTool.from_defaults(fn=search, name="discover_services")
 invoke_tool = FunctionTool.from_defaults(fn=invoke, name="invoke_service")
-# Add to QueryEngine / Agent as FunctionTool instances

@@ -1,4 +1,3 @@
-// LangChain integration (Python)
 import requests, os
 KB = os.environ["AGENTTALK_BASE"]
 KEY = os.environ["AGENTTALK_KEY"]
@@ -14,7 +13,6 @@ def invoke(service, payload, agent_id="langchain-agent"):
         json={"service_id": service["id"], "agent_id": agent_id,
               "request_payload": payload})
     if r.status_code == 402:
-        # wallet/x402 branch: surface requirements to signer
         raise RuntimeError(r.json()["paymentRequirements"])
     return r.json()
 
