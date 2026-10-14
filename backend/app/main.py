@@ -34,6 +34,27 @@ async def lifespan(app: FastAPI):
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
         await conn.run_sync(Base.metadata.create_all)
+        # Ensure full-text search trigger exists when bootstrapping from SQLAlchemy metadata
+        await conn.execute(text("""
+        CREATE OR REPLACE FUNCTION services_tsv_update() RETURNS trigger AS $$
+        BEGIN
+          NEW.search_tsv :=
+            setweight(to_tsvector('simple', coalesce(NEW.name, '')), 'A') ||
+            setweight(to_tsvector('simple', coalesce(NEW.description, '')), 'B') ||
+            setweight(to_tsvector('simple', coalesce(array_to_string(ARRAY (SELECT jsonb_array_elements_text(NEW.tool_schemas)), ' '), '')), 'C');
+          RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+        """))
+        await conn.execute(text("""
+        DO $$ BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'services_tsv_trigger') THEN
+            CREATE TRIGGER services_tsv_trigger BEFORE INSERT OR UPDATE ON services
+            FOR EACH ROW EXECUTE FUNCTION services_tsv_update();
+          END IF;
+        END $$;
+        """))
+        await conn.execute(text("CREATE INDEX IF NOT EXISTS services_tsv_idx ON services USING gin (search_tsv)"))
     yield
     task.cancel()
     await engine.dispose()
