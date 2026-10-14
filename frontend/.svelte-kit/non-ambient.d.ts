@@ -29,7 +29,7 @@ declare module "$app/types" {
 	type MatcherParam<M> = M extends (param : string) => param is (infer U extends string) ? U : string;
 
 	export interface AppTypes {
-		RouteId(): "/" | "/credits" | "/dashboard" | "/discover" | "/docs" | "/keys" | "/license" | "/login" | "/my" | "/my/calls" | "/my/services" | "/privacy" | "/publish" | "/security" | "/service" | "/service/[id]" | "/terms";
+		RouteId(): "/" | "/credits" | "/dashboard" | "/demo" | "/discover" | "/docs" | "/keys" | "/license" | "/login" | "/my" | "/my/calls" | "/my/services" | "/privacy" | "/publish" | "/security" | "/service" | "/service/[id]" | "/terms";
 		RouteParams(): {
 			"/service/[id]": { id: string }
 		};
@@ -37,6 +37,7 @@ declare module "$app/types" {
 			"/": { id?: string | undefined };
 			"/credits": Record<string, never>;
 			"/dashboard": Record<string, never>;
+			"/demo": Record<string, never>;
 			"/discover": Record<string, never>;
 			"/docs": Record<string, never>;
 			"/keys": Record<string, never>;
@@ -52,8 +53,8 @@ declare module "$app/types" {
 			"/service/[id]": { id: string };
 			"/terms": Record<string, never>
 		};
-		Pathname(): "/" | "/credits" | "/dashboard" | "/discover" | "/docs" | "/keys" | "/license" | "/login" | "/my/calls" | "/my/services" | "/privacy" | "/publish" | "/security" | `/service/${string}` & {} | "/terms";
+		Pathname(): "/" | "/credits" | "/dashboard" | "/demo" | "/discover" | "/docs" | "/keys" | "/license" | "/login" | "/my/calls" | "/my/services" | "/privacy" | "/publish" | "/security" | `/service/${string}` & {} | "/terms";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): string & {};
+		Asset(): "/demo-flow.json" | string & {};
 	}
 }

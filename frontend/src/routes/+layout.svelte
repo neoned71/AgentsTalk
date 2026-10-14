@@ -30,7 +30,7 @@
     finally {
       checked = true;
       const path = $page.url.pathname;
-      const pub = path === '/' || path === '/login' || path === '/docs' || path === '/privacy' || path === '/terms' || path === '/license' || path === '/security';
+      const pub = path === '/' || path === '/login' || path === '/docs' || path === '/privacy' || path === '/terms' || path === '/license' || path === '/security' || path === '/demo';
       if (!user && !pub) goto('/login');
     }
   }
@@ -57,6 +57,7 @@
   ];
 
   const footerLinks = [
+    { href: '/demo', label: 'Demo' },
     { href: '/docs', label: 'Docs' },
     { href: '/privacy', label: 'Privacy' },
     { href: '/terms', label: 'Terms' },
