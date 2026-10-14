@@ -74,6 +74,7 @@
   .cardhead { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
   .card h3 { margin:0; font-size:16px; }
   .tablewrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { padding:10px 8px; text-align:left; }
   th { color:#8b93a7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
   a { color:#6ee7b7; text-decoration:none; }
   .ghostbtn { background:transparent; color:#b4bcd0; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:12px; text-decoration:none; }
