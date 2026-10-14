@@ -80,6 +80,38 @@
   </div>
 </section>
 
+
+<div class="container">
+  <div class="integrate">
+    <div class="integrate-head">QUICK INTEGRATE · MCP · Python · curl · AI frameworks</div>
+    <pre class="integrate-code"><code>{`// 1) MCP (Cursor/Claude/Cline)
+{ "mcpServers": { "agenttalk": { "command": "npx", "args": ["mcp-remote", "https://provider.example.com/mcp/service"] } } }
+
+// 2) Python (FastAPI/LangChain/OpenAI agent)
+import requests
+hub="https://api.your-agenttalk-host"
+key="ak_..."
+services=requests.post(f"{hub}/search", headers={"Authorization":f"Bearer {key}"},
+                      json={"query":"summarize url"}).json()["results"]
+svc=services[0]
+r=requests.post(f"{hub}/calls/invoke", headers={"Authorization":f"Bearer {key}"},
+  json={"service_id":svc["id"],"agent_id":"python-agent","request_payload":{"url":"https://example.com"}})
+if r.status_code == 402:
+    # sign x402 requirements and retry with payment payload
+    pass
+
+// 3) curl
+curl -sS -H "Authorization: Bearer $AGENTTALK_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"service_id":"...","agent_id":"cli","request_payload":{}}' \\
+  https://api.your-agenttalk-host/calls/invoke`}</code></pre>
+    <p class="integrate-note">
+      Full patterns for MCP, LangChain, AutoGen, CrewAI, and x402 are in
+      <code>docs/DOCUMENTATION.md</code>.
+    </p>
+  </div>
+</div>
+
 <!-- DEMO -->
 <section class="section demo-section" use:reveal>
   <div class="container">
@@ -432,4 +464,14 @@
     h1 { font-size:44px; }
     .demo { grid-template-columns:1fr; }
   }
+
+  .integrate { background:#0d1117; border-radius:12px; padding:16px; margin:18px 0 0;
+                border:0; }
+  .integrate-head { color:#4ade80; font-size:11px; letter-spacing:.1em;
+                    text-transform:uppercase; font-weight:700; margin-bottom:10px; }
+  .integrate-code { background:#05070b; color:#d7e1ea; padding:14px; border-radius:10px;
+                    overflow-x:auto; font-size:12px; line-height:1.45; margin:0; }
+  .integrate-code code { font-family:ui-monospace,SFMono-Regular,monospace; }
+  .integrate-note { color:#8b93a7; font-size:12px; margin-top:10px; }
+  .integrate-note code { color:#9cc0ff; }
 </style>
