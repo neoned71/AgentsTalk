@@ -90,11 +90,13 @@ async def invoke_service(body: CallRequest, user: User = Depends(get_current_use
         }
 
     # ---- x402 crypto branch (agents / wallet direct) ----
+    if not settings.platform_wallet_address:
+        raise HTTPException(503, "platform wallet not configured")
     requirements = X402PaymentRequirements(
         price_atomic=svc.price_atomic,
         currency=svc.currency,
         chain=svc.chain,
-        pay_to=settings.platform_wallet_address or "PLATFORM_WALLET_UNSET",
+        pay_to=settings.platform_wallet_address,
     )
     x402 = X402Client()
 
@@ -115,9 +117,11 @@ async def invoke_service(body: CallRequest, user: User = Depends(get_current_use
     payment_payload = body.request_payload.get("_payment_payload") or {"txHash": body.payment_tx}
 
     try:
-        await x402.verify(payment_payload, requirements)
+        vr = await x402.verify(payment_payload, requirements)
     except Exception as e:
         raise HTTPException(402, f"payment verification failed: {e}")
+    if isinstance(vr, dict) and vr.get("isValid") is False:
+        raise HTTPException(402, "payment verification failed: facilitator reports invalid payment")
 
     try:
         settle = await x402.settle(payment_payload, requirements)

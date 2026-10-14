@@ -41,7 +41,7 @@ async def lifespan(app: FastAPI):
 
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="AgentTalk", version="0.1.0", docs_url="/docs" if settings.environment != "production" else None, redoc_url=None, lifespan=lifespan)"
+app = FastAPI(title="AgentTalk", version="0.1.0", docs_url="/docs" if settings.environment != "production" else None, redoc_url=None, lifespan=lifespan)
 
 from fastapi import Request
 import logging
