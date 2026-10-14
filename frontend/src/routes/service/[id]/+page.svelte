@@ -167,7 +167,7 @@
         <button class="ghostbtn" onclick={copyEndpoint}>{copied ? 'Copied ✓' : 'Copy'}</button>
       </div>
       <code class="endpoint">{service.mcp_endpoint}</code>
-      <p class="muted small">Point your MCP client at this URL. AgentsHub collects payment at invoke time.</p>
+      <p class="muted small">Point your MCP client at this URL. AgentTalk collects payment at invoke time.</p>
     </div>
 
     <!-- tool schemas -->

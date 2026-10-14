@@ -1,4 +1,4 @@
-# AgentsHub (agent services marketplace)
+# AgentTalk (agent services marketplace)
 
 ## Stack
 - Frontend: SvelteKit 5 (portal for publishers + discovery)

@@ -69,11 +69,11 @@ async def wallet_challenge(body: dict, request: Request, response: Response):
         raise HTTPException(400, "address required")
     nonce = str(uuid.uuid4())
     message = (
-        "AgentsHub wants you to sign in with your wallet.\n\n"
+        "AgentTalk wants you to sign in with your wallet.\n\n"
         f"Address: {address}\n"
         f"Nonce: {nonce}\n"
         f"Domain: agentshub.local\n"
-        "Statement: Sign in to AgentsHub."
+        "Statement: Sign in to AgentTalk."
     )
     response.set_cookie("siwe_nonce", nonce, httponly=True, samesite="lax", max_age=300, path="/")
     response.set_cookie("siwe_address", address, httponly=True, samesite="lax", max_age=300, path="/")

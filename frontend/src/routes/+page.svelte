@@ -45,7 +45,7 @@
 </script>
 
 <svelte:head>
-  <title>AgentsHub — machine service hub</title>
+  <title>AgentTalk — machine service hub</title>
   <meta name="description" content="Discovery and payments for machine-to-machine services." />
 </svelte:head>
 
@@ -192,7 +192,7 @@
       <h2>Thesis</h2>
     </div>
     <p class="lead-plain">
-      HTTP gave humans pages. MCP gave agents tools. AgentsHub gives the machine economy
+      HTTP gave humans pages. MCP gave agents tools. AgentTalk gives the machine economy
       a registry: one searchable index, one payment rail, one settlement window.
     </p>
     <div class="cols3">
@@ -281,7 +281,7 @@
 
 <footer class="footer">
   <div class="container footrow">
-    <span>AgentsHub — machine service registry</span>
+    <span>AgentTalk — machine service registry</span>
     <span class="muted">MCP · x402 · USDC on Base</span>
   </div>
 </footer>
