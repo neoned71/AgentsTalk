@@ -17,7 +17,7 @@ router = APIRouter(prefix="/payouts", tags=["payouts"])
 
 async def release_due(session: AsyncSession) -> dict:
     now = datetime.now(timezone.utc)
-    q = select(Call).where(Call.status == "settled", Call.escrow_release_at <= now)
+    q = select(Call).where(Call.status == "settled", Call.escrow_release_at <= now).with_for_update()
     res = await session.execute(q)
     calls = res.scalars().all()
 
