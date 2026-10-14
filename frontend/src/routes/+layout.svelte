@@ -134,6 +134,9 @@
           {#each links as l}
             <a href={l.href} class:active={$page.url.pathname === l.href}>{l.label}</a>
           {/each}
+          {#if user?.role === 'admin'}
+            <a href="/admin" class:active={$page.url.pathname === '/admin'}>Admin</a>
+          {/if}
         {:else}
           <a href="/" class:active={$page.url.pathname === '/'}>Home</a>
           <a href="/discover" class:active={$page.url.pathname === '/discover'}>Discover</a>

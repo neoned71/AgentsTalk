@@ -10,8 +10,8 @@ from sqlalchemy import text
 from app.config import settings
 from app.db import engine, Base, SessionLocal
 from app.models import AnalyticsEvent  # noqa: F401
-from app.services.seed import seed_curated_services
-from app.routers import publishers, services, analytics, search, calls, payouts, auth, receipts, billing, keys, routing
+from app.services.seed import seed_curated_services, seed_admin_user
+from app.routers import publishers, services, analytics, admin, search, calls, payouts, auth, receipts, billing, keys, routing
 from app.routers.payouts import release_due
 
 
@@ -60,6 +60,7 @@ async def lifespan(app: FastAPI):
         await conn.execute(text("CREATE INDEX IF NOT EXISTS services_tsv_idx ON services USING gin (search_tsv)"))
     async with SessionLocal() as seed_session:
         await seed_curated_services(seed_session)
+        await seed_admin_user(seed_session)
         await seed_session.commit()
     yield
     task.cancel()
@@ -100,6 +101,7 @@ app.include_router(billing.router)
 app.include_router(keys.router)
 app.include_router(routing.router)
 app.include_router(analytics.router)
+app.include_router(admin.router)
 
 
 @app.get("/health")

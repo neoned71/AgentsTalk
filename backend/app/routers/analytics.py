@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
 from app.models import AnalyticsEvent
+from app.auth import require_admin
 
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
@@ -39,7 +40,7 @@ async def track_event(body: dict, session: AsyncSession = Depends(get_session)):
 
 
 @router.get("/summary")
-async def analytics_summary(days: int = 7, session: AsyncSession = Depends(get_session)):
+async def analytics_summary(days: int = 7, admin=Depends(require_admin), session: AsyncSession = Depends(get_session)):
     since = datetime.now(timezone.utc) - timedelta(days=max(1, min(days, 90)))
     q = select(
         AnalyticsEvent.path,

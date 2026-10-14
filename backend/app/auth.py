@@ -142,3 +142,9 @@ def hash_api_key(key: str) -> str:
 
 def prefix_of(key: str) -> str:
     return key[:11]
+
+
+def require_admin(user: User = Depends(get_current_user)):
+    if user.role != "admin":
+        raise HTTPException(status_code=403, detail="admin access required")
+    return user

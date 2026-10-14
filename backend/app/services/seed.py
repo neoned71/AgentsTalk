@@ -6,7 +6,9 @@ from typing import List, Dict, Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Publisher, Service
+from app.auth import hash_password
+from app.models import Publisher, Service, User
+from app.config import settings
 from app.services.embeddings import get_embedder
 
 
@@ -146,3 +148,21 @@ async def seed_curated_services(session: AsyncSession) -> None:
             active=True,
         )
         session.add(service)
+
+
+async def seed_admin_user(session):
+    if not settings.admin_email or not settings.admin_password:
+        return
+    result = await session.execute(select(User).where(User.email == settings.admin_email))
+    user = result.scalar_one_or_none()
+    if user is None:
+        user = User(
+            email=settings.admin_email,
+            password_hash=hash_password(settings.admin_password),
+            display_name="Platform Admin",
+            role="admin",
+        )
+        session.add(user)
+    else:
+        user.role = "admin"
+        user.password_hash = hash_password(settings.admin_password)
