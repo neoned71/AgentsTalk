@@ -49,7 +49,14 @@ async def trigger_release(user: User = Depends(get_current_user), session: Async
 
 @router.get("")
 async def list_payouts(limit: int = 50, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
-    res = await session.execute(select(Payout).limit(limit))
+    from app.models import Publisher
+    limit = min(max(limit, 1), 200)
+    q = select(Payout)
+    if user.role != "admin":
+        allowed = select(Publisher.id).where(Publisher.user_id == user.id)
+        q = q.where(Payout.publisher_id.in_(allowed))
+    q = q.order_by(Payout.created_at.desc()).limit(limit)
+    res = await session.execute(q)
     rows = res.scalars().all()
     return [{"id": str(p.id), "publisher_id": str(p.publisher_id),
              "amount_atomic": p.amount_atomic, "status": p.status, "tx_hash": p.tx_hash,

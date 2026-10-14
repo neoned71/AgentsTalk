@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from sqlalchemy import select, or_
 from app.auth import get_current_user
 from app.config import settings
 from app.db import get_session
@@ -29,7 +30,7 @@ async def invoke_service(body: CallRequest, user: User = Depends(get_current_use
 
     # ---- Credits + receipt branch (web UI) ----
     if getattr(body, "receipt_number", None):
-        res = await session.execute(select(Receipt).where(Receipt.receipt_number == body.receipt_number))
+        res = await session.execute(select(Receipt).where(Receipt.receipt_number == body.receipt_number).with_for_update())
         receipt = res.scalar_one_or_none()
         if not receipt or receipt.user_id != user.id or receipt.service_id != svc.id:
             raise HTTPException(400, "invalid receipt")
@@ -39,7 +40,8 @@ async def invoke_service(body: CallRequest, user: User = Depends(get_current_use
         success = bool(getattr(body, "success", True))
         if not success:
             # void receipt -> restore credits
-            bal = await session.get(UserBalance, user.id)
+            bal = await session.execute(select(UserBalance).where(UserBalance.user_id == user.id).with_for_update())
+            bal = bal.scalar_one_or_none()
             if bal:
                 bal.balance_atomic += receipt.amount_atomic
             session.add(CreditTransaction(user_id=user.id, amount_atomic=receipt.amount_atomic,
@@ -164,13 +166,25 @@ async def refund_call(call_id: str, session: AsyncSession = Depends(get_session)
 
 
 @router.get("")
-async def list_calls(service_id: Optional[str] = None, limit: int = 50, session: AsyncSession = Depends(get_session)):
+async def list_calls(
+    service_id: Optional[str] = None,
+    limit: int = 50,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
     from sqlalchemy import select
 
+    from app.models import Publisher, Service
+
+    limit = min(max(limit, 1), 200)
     q = select(Call)
     if service_id:
         q = q.where(Call.service_id == uuid.UUID(service_id))
-    q = q.limit(limit)
+    if user.role != "admin":
+        publisher_ids = select(Publisher.id).where(Publisher.user_id == user.id)
+        service_ids = select(Service.id).where(Service.publisher_id.in_(publisher_ids))
+        q = q.where(or_(Call.agent_id == str(user.id), Call.service_id.in_(service_ids)))
+    q = q.order_by(Call.created_at.desc()).limit(limit)
     res = await session.execute(q)
     rows = res.scalars().all()
     return [{"id": str(c.id), "service_id": str(c.service_id), "agent_id": c.agent_id,

@@ -7,12 +7,14 @@ WELL_KNOWN_PATHS = ["/.well-known/agentshub.json", "/.well-known/mcp.json"]
 
 
 async def fetch_manifests(domain: str) -> dict[str, Any]:
-    domain = domain.strip().strip("/")
-    if "://" in domain:
-        domain = domain.split("://", 1)[1].split("/", 1)[0]
+    from app.services.security import validate_public_host
+    ok, host = validate_public_host(domain)
+    if not ok:
+        return {"domain": domain, "mcp": None, "agentshub": None, "errors": [f"invalid domain: {host}"]}
+    domain = host
     base = f"https://{domain}"
     results: dict[str, Any] = {"domain": domain, "mcp": None, "agentshub": None, "errors": []}
-    async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+    async with httpx.AsyncClient(timeout=15.0, follow_redirects=True, max_redirects=3) as client:
         for path in WELL_KNOWN_PATHS:
             url = base + path
             try:

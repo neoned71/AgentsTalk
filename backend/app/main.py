@@ -4,8 +4,10 @@ import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
+from app.config import settings
 from app.db import engine, Base, SessionLocal
 from app.routers import publishers, services, search, calls, payouts, auth, receipts, billing, keys, routing
 from app.routers.payouts import release_due
@@ -23,6 +25,10 @@ async def _release_loop():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if settings.environment == "production" and (not settings.jwt_secret or len(settings.jwt_secret) < 32):
+        raise RuntimeError("JWT_SECRET must be set and at least 32 chars in production")
+    if not settings.jwt_secret:
+        raise RuntimeError("JWT_SECRET is required (leave blank is invalid even in dev)")
     task = asyncio.create_task(_release_loop())
     async with engine.begin() as conn:
         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
@@ -39,9 +45,9 @@ app = FastAPI(title="AgentTalk", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -59,4 +65,9 @@ app.include_router(routing.router)
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("SELECT 1"))
+        return {"status": "ok", "environment": settings.environment}
+    except Exception:
+        return JSONResponse(status_code=503, content={"status": "unhealthy"})

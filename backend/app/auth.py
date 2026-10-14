@@ -49,7 +49,7 @@ def decode_token(token: str) -> Optional[str]:
 def set_auth_cookie(response, token: str):
     response.set_cookie(
         key="access_token", value=token, httponly=True, samesite="lax",
-        max_age=settings.jwt_exp_minutes * 60, secure=False, path="/",
+        max_age=settings.jwt_exp_minutes * 60, secure=bool(settings.secure_cookies), path="/",
     )
 
 

@@ -22,13 +22,19 @@ async def create_receipt(body: dict, user: User = Depends(get_current_user), ses
     svc = await session.get(Service, uuid.UUID(sid))
     if not svc or not svc.active:
         raise HTTPException(404, "service not found")
-    # balance
-    bal = await session.get(UserBalance, user.id)
+    from sqlalchemy import select as _select
+    bal = (await session.execute(_select(UserBalance).where(UserBalance.user_id == user.id).with_for_update())).scalar_one_or_none()
+    if bal is None:
+        bal = UserBalance(user_id=user.id, balance_atomic=0)
+        session.add(bal)
+        await session.flush()
     if not bal or bal.balance_atomic < svc.price_atomic:
         raise HTTPException(402, "insufficient credits; top up first")
 
     # reserve
     bal.balance_atomic -= svc.price_atomic
+    if bal.balance_atomic < 0:
+        raise HTTPException(402, "insufficient credits; top up first")
     number = "rcpt_" + secrets.token_urlsafe(12)
     receipt = Receipt(user_id=user.id, service_id=svc.id, amount_atomic=svc.price_atomic,
                      receipt_number=number, status="reserved")

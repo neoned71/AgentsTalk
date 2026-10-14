@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth import get_current_user
 from app.db import get_session
+from app.config import settings
 from app.models import User, UserBalance, CreditTransaction
 
 router = APIRouter(prefix="/billing", tags=["billing"])
@@ -26,6 +27,8 @@ async def topup(body: dict, user: User = Depends(get_current_user), session: Asy
     amt = int(body.get("amount_atomic", 0))
     if amt <= 0:
         raise HTTPException(400, "amount_atomic must be > 0")
+    if not getattr(settings, "allow_demo_topup", False):
+        raise HTTPException(403, "demo top-up disabled in this environment; use a real payment rail")
     bal = await session.get(UserBalance, user.id)
     if not bal:
         bal = UserBalance(user_id=user.id, balance_atomic=0)

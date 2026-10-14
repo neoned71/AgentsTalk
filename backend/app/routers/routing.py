@@ -17,8 +17,12 @@ router = APIRouter(prefix="/routing", tags=["routing"])
 
 
 async def _probe(endpoint: str) -> tuple[bool, int | None]:
+    from app.services.security import validate_http_url
+    ok, msg = validate_http_url(endpoint)
+    if not ok:
+        return False, None
     try:
-        async with httpx.AsyncClient(timeout=5.0, follow_redirects=True) as client:
+        async with httpx.AsyncClient(timeout=5.0, follow_redirects=False) as client:
             t0 = time.perf_counter()
             try:
                 r = await client.head(endpoint)
