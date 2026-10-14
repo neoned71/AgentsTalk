@@ -3,12 +3,17 @@
 	"/credits": [],
 	"/dashboard": [],
 	"/discover": [],
+	"/docs": [],
 	"/keys": [],
+	"/license": [],
 	"/login": [],
 	"/my/calls": [],
 	"/my/services": [],
+	"/privacy": [],
 	"/publish": [],
+	"/security": [],
 	"/service/[id]": [
 		"src/routes/service/[id]/+page.js"
-	]
+	],
+	"/terms": []
 }
