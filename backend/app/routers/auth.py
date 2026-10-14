@@ -67,16 +67,21 @@ async def wallet_challenge(body: dict, request: Request, response: Response):
     address = (body.get("address") or "").lower()
     if not address:
         raise HTTPException(400, "address required")
+    from datetime import datetime, timezone, timedelta
     nonce = str(uuid.uuid4())
+    expires = datetime.now(timezone.utc) + timedelta(minutes=5)
     message = (
         "AgentTalk wants you to sign in with your wallet.\n\n"
         f"Address: {address}\n"
         f"Nonce: {nonce}\n"
-        f"Domain: agentshub.local\n"
+        "Domain: agentshub.local\n"
+        f"Issued At: {datetime.now(timezone.utc).isoformat()}\n"
+        f"Expires At: {expires.isoformat()}\n"
         "Statement: Sign in to AgentTalk."
     )
     response.set_cookie("siwe_nonce", nonce, httponly=True, samesite="lax", max_age=300, path="/")
     response.set_cookie("siwe_address", address, httponly=True, samesite="lax", max_age=300, path="/")
+    response.set_cookie("siwe_expires", str(int(expires.timestamp())), httponly=True, samesite="lax", max_age=300, path="/")
     return {"message": message, "nonce": nonce}
 
 
@@ -87,9 +92,15 @@ async def wallet_verify(body: dict, request: Request, response: Response, sessio
     message = body.get("message")
     nonce = request.cookies.get("siwe_nonce")
     addr_cookie = request.cookies.get("siwe_address")
-    if not address or not signature or not message or not nonce or addr_cookie != address:
+    expires_cookie = request.cookies.get("siwe_expires")
+    if not address or not signature or not message or not nonce or addr_cookie != address or not expires_cookie:
         raise HTTPException(400, "invalid challenge state")
-    if nonce not in message:
+    try:
+        if int(expires_cookie) < int(datetime.now(timezone.utc).timestamp()):
+            raise HTTPException(400, "challenge expired")
+    except Exception:
+        raise HTTPException(400, "invalid expiry")
+    if nonce not in message or "agentshub.local" not in message:
         raise HTTPException(400, "nonce mismatch")
     recovered = verify_siwe_signature(message, signature)
     if recovered != address:
@@ -110,6 +121,7 @@ async def wallet_verify(body: dict, request: Request, response: Response, sessio
     if clear_siwe:
         response.delete_cookie("siwe_nonce", path="/")
         response.delete_cookie("siwe_address", path="/")
+        response.delete_cookie("siwe_expires", path="/")
     return {"id": str(user.id), "wallet_address": user.wallet_address, "role": user.role}
 
 
