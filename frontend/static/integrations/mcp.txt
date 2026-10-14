@@ -1,0 +1,19 @@
+// MCP (Claude Desktop, Cursor, Cline, Windsurf)
+// 1) Install remote MCP bridge:
+// npm i -g mcp-remote flux-mcp
+// 2) Discover available services:
+curl -sS -H "Authorization: Bearer $AGENTTALK_KEY" ...
+  https://api.agenttalk-host/search -d '{"query":"summarize url"}'
+// 3) Point editor to the provider endpoint from `mcp_endpoint`
+{
+  "mcpServers": {
+    "agenttalk-summarize": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://provider.example.com/mcp/summarize-url"]
+    }
+  }
+}
+// Typical config files:
+// Claude Desktop: ~/Library/Application Support/Claude/claude_desktop_config.json
+// Cursor: ~/.cursor/mcp.json | Cline: mcp.json
+// All call AgentTalk consistent endpoint JSON-RPC 2.0 tools/list tools/call

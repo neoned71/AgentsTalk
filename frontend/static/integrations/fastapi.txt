@@ -1,0 +1,15 @@
+// FastAPI host that proxies to AgentTalk
+from fastapi import Body, HTTPException
+import httpx, os
+HUB=os.environ["AGENTTALK_BASE"]; KEY=os.environ["AGENTTALK_KEY"]
+
+@app.post("/run/{service_id}")
+async def run(service_id: str, payload: dict = Body(default={})):
+    async with httpx.AsyncClient() as c:
+        r = await c.post(f"{HUB}/calls/invoke",
+            json={"service_id": service_id, "agent_id":"fastapi",
+                  "request_payload": payload},
+            headers={"Authorization": f"Bearer {KEY}"})
+    if r.status_code >= 400:
+        raise HTTPException(status_code=r.status_code, detail=r.text)
+    return r.json()

@@ -1,0 +1,11 @@
+// Generic HTTP / curl quickstart
+export HUB=https://api.agenttalk-host
+export KEY=ak_replace
+curl -sS -H "Authorization: Bearer $KEY" \
+  -X POST "$HUB/search" -H 'Content-Type: application/json' \
+  -d '{"query":"translate text","limit":5}'
+# capture service_id
+curl -sS -H "Authorization: Bearer $KEY" \
+  -X POST "$HUB/calls/invoke" -H 'Content-Type: application/json' \
+  -d '{"service_id":"REPLACE","agent_id":"curl-agent","request_payload":{"text":"hello"}}'
+# 98% released after 30d; 2% platform fee

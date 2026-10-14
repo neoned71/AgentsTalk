@@ -1,0 +1,20 @@
+// LlamaIndex integration (Python)
+from llama_index.core.tools import FunctionTool
+import requests, os
+
+BASE=os.environ["AGENTTALK_BASE"]; KEY=os.environ["AGENTTALK_KEY"]
+
+def search(query: str):
+    return requests.post(f"{BASE}/search",
+        headers={"Authorization": f"Bearer {KEY}"},
+        json={"query": query}).json()["results"]
+
+def invoke(service_id: str, payload: dict):
+    return requests.post(f"{BASE}/calls/invoke",
+        headers={"Authorization": f"Bearer {KEY}"},
+        json={"service_id": service_id, "agent_id": "llamaindex",
+              "request_payload": payload}).json()
+
+search_tool = FunctionTool.from_defaults(fn=search, name="discover_services")
+invoke_tool = FunctionTool.from_defaults(fn=invoke, name="invoke_service")
+# Add to QueryEngine / Agent as FunctionTool instances

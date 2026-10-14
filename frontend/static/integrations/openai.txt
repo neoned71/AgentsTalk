@@ -1,0 +1,45 @@
+// OpenAI Agents / Chat Completions function calling
+const base = process.env.AGENTTALK_BASE;
+const key = process.env.AGENTTALK_KEY;
+
+async function agenttalkFetch(path, payload) {
+  const r = await fetch(`${base}${path}`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (r.status === 402) throw new Error(JSON.stringify(await r.json()));
+  return r.json();
+}
+
+// tool definitions consumed by chat completions or Agents SDK
+const tools = [
+  {
+    type: "function",
+    function: {
+      name: "agenttalk_search",
+      description: "Search available machine services.",
+      parameters: {
+        type: "object",
+        properties: { query: { type: "string" }, limit: { type: "integer" } },
+        required: ["query"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "agenttalk_invoke",
+      description: "Invoke a service by id and payload.",
+      parameters: {
+        type: "object",
+        properties: {
+          service_id: { type: "string" },
+          request_payload: { type: "object" }
+        },
+        required: ["service_id", "request_payload"]
+      }
+    }
+  }
+];
+// Call tool handlers map to endpoints /search and /calls/invoke.

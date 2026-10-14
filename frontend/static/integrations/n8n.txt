@@ -1,0 +1,13 @@
+// n8n integration (HTTP Request node)
+// Credential: Header Auth, name: Authorization, value: Bearer <KEY>
+// Node 1: HTTP Request
+//   Method: POST
+//   URL: https://api.agenttalk-host/search
+//   Body: {"query": "summarize url", "limit": 5}
+// Node 2: Function to extract first service
+//   return [{json: {id: items[0].json.id}}]
+// Node 3: HTTP Request
+//   Method: POST
+//   URL: https://api.agenttalk-host/calls/invoke
+//   Body: {"service_id":"{{ $json.id }}","agent_id":"n8n-agent","request_payload":{}}
+// Add IF nodes to handle 402 payment complexity (wallet).

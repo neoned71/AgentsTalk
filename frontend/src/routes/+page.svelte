@@ -8,6 +8,27 @@
   let error = $state(null);
   let invoked = $state(false);
   let loginRequired = $state(false);
+  let activeTool = $state('mcp');
+  let snippet = $state('Loading integration guide...');
+  const tools = [
+    { id:'mcp', name:'MCP (Claude/Cursor/Cline)' },
+    { id:'langchain', name:'LangChain' },
+    { id:'openai', name:'OpenAI Agents' },
+    { id:'autogen', name:'AutoGen' },
+    { id:'crewai', name:'CrewAI' },
+    { id:'llamaindex', name:'LlamaIndex' },
+    { id:'vercel', name:'Vercel AI SDK' },
+    { id:'n8n', name:'n8n' },
+    { id:'curl', name:'HTTP / curl' },
+    { id:'fastapi', name:'FastAPI proxy' }
+  ];
+  $effect(() => {
+    fetch(`/integrations/${activeTool}.txt`)
+      .then(r => r.text())
+      .then(v => (snippet = v))
+      .catch(() => (snippet = 'Unable to load integration guide.'));
+  });
+
   let stage = $state(0);
 
   $effect(() => {
@@ -83,31 +104,17 @@
 
 <div class="container">
   <div class="integrate">
-    <div class="integrate-head">QUICK INTEGRATE · MCP · Python · curl · AI frameworks</div>
-    <pre class="integrate-code"><code>{`// 1) MCP (Cursor/Claude/Cline)
-{ "mcpServers": { "agenttalk": { "command": "npx", "args": ["mcp-remote", "https://provider.example.com/mcp/service"] } } }
-
-// 2) Python (FastAPI/LangChain/OpenAI agent)
-import requests
-hub="https://api.your-agenttalk-host"
-key="ak_..."
-services=requests.post(f"{hub}/search", headers={"Authorization":f"Bearer {key}"},
-                      json={"query":"summarize url"}).json()["results"]
-svc=services[0]
-r=requests.post(f"{hub}/calls/invoke", headers={"Authorization":f"Bearer {key}"},
-  json={"service_id":svc["id"],"agent_id":"python-agent","request_payload":{"url":"https://example.com"}})
-if r.status_code == 402:
-    # sign x402 requirements and retry with payment payload
-    pass
-
-// 3) curl
-curl -sS -H "Authorization: Bearer $AGENTTALK_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"service_id":"...","agent_id":"cli","request_payload":{}}' \\
-  https://api.your-agenttalk-host/calls/invoke`}</code></pre>
+    <div class="integrate-head">QUICK INTEGRATE · PICK YOUR TOOL (10 TARGETS)</div>
+    <div class="tool-tabs">
+      {#each tools as t}
+        <button class="tool-tab" class:active={activeTool === t.id} type="button"
+                onclick={() => activeTool = t.id}>{t.name}</button>
+      {/each}
+    </div>
+    <pre class="integrate-code"><code>{snippet}</code></pre>
     <p class="integrate-note">
-      Full patterns for MCP, LangChain, AutoGen, CrewAI, and x402 are in
-      <code>docs/DOCUMENTATION.md</code>.
+      Hosted guide: <code>docs/DOCUMENTATION.md</code> plus reproducible files under
+      <code>frontend/static/integrations/&lt;tab&gt;.txt</code>.
     </p>
   </div>
 </div>
@@ -469,6 +476,10 @@ curl -sS -H "Authorization: Bearer $AGENTTALK_KEY" \\
                 border:0; }
   .integrate-head { color:#4ade80; font-size:11px; letter-spacing:.1em;
                     text-transform:uppercase; font-weight:700; margin-bottom:10px; }
+  .tool-tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .tool-tab { border:0; background:#151b24; color:#b5c1cf; border-radius:999px;
+               padding:7px 10px; font-size:11px; cursor:pointer; }
+  .tool-tab.active { background:#4ade80; color:#07150d; font-weight:700; }
   .integrate-code { background:#05070b; color:#d7e1ea; padding:14px; border-radius:10px;
                     overflow-x:auto; font-size:12px; line-height:1.45; margin:0; }
   .integrate-code code { font-family:ui-monospace,SFMono-Regular,monospace; }

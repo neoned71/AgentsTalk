@@ -1,0 +1,26 @@
+// LangChain integration (Python)
+import requests, os
+KB = os.environ["AGENTTALK_BASE"]
+KEY = os.environ["AGENTTALK_KEY"]
+
+def get_services(query: str):
+    return requests.post(f"{KB}/search",
+        headers={"Authorization": f"Bearer {KEY}"},
+        json={"query": query, "limit": 5}).json()["results"]
+
+def invoke(service, payload, agent_id="langchain-agent"):
+    r = requests.post(f"{KB}/calls/invoke",
+        headers={"Authorization": f"Bearer {KEY}"},
+        json={"service_id": service["id"], "agent_id": agent_id,
+              "request_payload": payload})
+    if r.status_code == 402:
+        # wallet/x402 branch: surface requirements to signer
+        raise RuntimeError(r.json()["paymentRequirements"])
+    return r.json()
+
+from langchain.tools import tool
+@tool
+def summarize_url(url: str) -> str:
+    match = [s for s in get_services("summarize url") if "summarize" in s["name"]][0]
+    result = invoke(match, {"url": url})
+    return f"endpoint={result['mcp_endpoint']} call_id={result['call_id']}"

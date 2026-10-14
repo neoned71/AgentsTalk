@@ -1,0 +1,33 @@
+// Vercel AI SDK (TypeScript/Next.js)
+import { generateText, tool } from "ai";
+import { z } from "zod";
+
+const base = process.env.AGENTTALK_BASE!;
+const key = process.env.AGENTTALK_KEY!;
+
+const searchTool = tool({
+  name: "discover services",
+  description: "Find available MCP services.",
+  parameters: z.object({ query: z.string(), limit: z.number().default(5) }),
+  execute: async ({ query, limit }) => {
+    const r = await fetch(base + "/search", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ query, limit })
+    });
+    return r.json();
+  }
+});
+
+const invokeTool = tool({
+  name: "invoke service",
+  description: "Call a discovered service.",
+  parameters: z.object({ service_id: z.string(), request_payload: z.record(z.any()) }),
+  execute: async ({ service_id, request_payload }) => (await fetch(`${base}/calls/invoke`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ service_id, agent_id: "vercel-agent", request_payload })
+  })).json()
+});
+
+// Pass tools to streamText/generateText via `tools` option.

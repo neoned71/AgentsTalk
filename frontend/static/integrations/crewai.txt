@@ -1,0 +1,23 @@
+// CrewAI integration (Python)
+from crewai import tool
+from crewai.tools import BaseTool
+import requests, os
+
+BASE=os.environ["AGENTTALK_BASE"]; KEY=os.environ["AGENTTALK_KEY"]
+
+@tool
+def discover_services(query: str) -> str:
+    r = requests.post(f"{BASE}/search",
+        headers={"Authorization": f"Bearer {KEY}"},
+        json={"query": query})
+    return r.json()["results"]
+
+@tool
+def invoke_service(service_id: str, payload: str) -> str:
+    r = requests.post(f"{BASE}/calls/invoke",
+        headers={"Authorization": f"Bearer {KEY}"},
+        json={"service_id": service_id, "agent_id": "crewai",
+              "request_payload": {"input": payload}})
+    return r.json()
+
+# Assign to agents with tools=[discover_services, invoke_service]
