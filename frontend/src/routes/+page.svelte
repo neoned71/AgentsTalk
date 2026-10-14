@@ -245,7 +245,7 @@
       <div class="demo-col">
         <div class="demo-row">
           <span class="prompt">$</span>
-          <span class="typed">agent.query("summarize url")</span>
+          <span class="typed">agent.query("github repository tools")</span>
           <span class="cursor" class:blink={stage >= 0}></span>
         </div>
 
@@ -253,16 +253,16 @@
           <div class="block-head">01 DISCOVER</div>
           <div class="demo-list">
             <div class="demo-item hot">
-              <span class="name">summarize-url</span>
-              <span class="meta">exact · USDC 0.002</span>
+              <span class="name">GitHub MCP Gateway</span>
+              <span class="meta">exact · USDC 0.003000</span>
             </div>
             <div class="demo-item">
-              <span class="name">doc-extract</span>
-              <span class="meta">similar 0.91</span>
+              <span class="name">Brave Search MCP</span>
+              <span class="meta">similar 0.82</span>
             </div>
             <div class="demo-item">
-              <span class="name">web-scraper</span>
-              <span class="meta">similar 0.84</span>
+              <span class="name">Slack MCP Bridge</span>
+              <span class="meta">similar 0.71</span>
             </div>
           </div>
         </div>
