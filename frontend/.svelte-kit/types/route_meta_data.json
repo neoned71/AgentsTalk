@@ -1,0 +1,14 @@
+{
+	"/": [],
+	"/credits": [],
+	"/dashboard": [],
+	"/discover": [],
+	"/keys": [],
+	"/login": [],
+	"/my/calls": [],
+	"/my/services": [],
+	"/publish": [],
+	"/service/[id]": [
+		"src/routes/service/[id]/+page.js"
+	]
+}

@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: agentshub
+      POSTGRES_PASSWORD: agentshub
+      POSTGRES_DB: agentshub
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentshub -d agentshub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agentshub:agentshub@db:5432/agentshub
+      EMBEDDING_PROVIDER: gemini
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      PLATFORM_WALLET_ADDRESS: ${PLATFORM_WALLET_ADDRESS}
+      PLATFORM_FEE_BPS: "200"
+      ESCROW_HOLD_DAYS: "30"
+      X402_FACILITATOR_URL: ${X402_FACILITATOR_URL:-https://api.cdp.coinbase.com/platform/v2/x402}
+      USDC_ADDRESS: ${USDC_ADDRESS:-0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913}
+      CHAIN: ${CHAIN:-base}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      PUBLIC_API_BASE: http://backend:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  pgdata:
