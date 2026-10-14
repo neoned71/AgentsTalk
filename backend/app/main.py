@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from app.config import settings
 from app.db import engine, Base, SessionLocal
+from app.services.seed import seed_curated_services
 from app.routers import publishers, services, search, calls, payouts, auth, receipts, billing, keys, routing
 from app.routers.payouts import release_due
 
@@ -56,6 +57,9 @@ async def lifespan(app: FastAPI):
         END $$;
         """))
         await conn.execute(text("CREATE INDEX IF NOT EXISTS services_tsv_idx ON services USING gin (search_tsv)"))
+    async with SessionLocal() as seed_session:
+        await seed_curated_services(seed_session)
+        await seed_session.commit()
     yield
     task.cancel()
     await engine.dispose()

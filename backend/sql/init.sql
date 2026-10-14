@@ -7,6 +7,7 @@ CREATE TABLE publishers (
     wallet_address TEXT NOT NULL,
     display_name TEXT,
     verified BOOLEAN NOT NULL DEFAULT FALSE,
+    user_id UUID,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
