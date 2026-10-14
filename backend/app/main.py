@@ -41,7 +41,18 @@ async def lifespan(app: FastAPI):
 
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="AgentTalk", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="AgentTalk", version="0.1.0", docs_url="/docs" if settings.environment != "production" else None, redoc_url=None, lifespan=lifespan)"
+
+from fastapi import Request
+import logging
+
+log = logging.getLogger("agenttalk")
+
+@app.exception_handler(Exception)
+async def _unhandled(request: Request, exc: Exception):
+    log.exception("unhandled error: %s", type(exc).__name__)
+    return JSONResponse(status_code=500, content={"detail": "internal server error"})
+
 
 app.add_middleware(
     CORSMiddleware,
