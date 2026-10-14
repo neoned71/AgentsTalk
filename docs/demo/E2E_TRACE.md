@@ -1,4 +1,4 @@
-# AgentTalk — End-to-End Demo Trace
+# AgentsTalk — End-to-End Demo Trace
 
 A real local simulation against the FastAPI backend (`http://localhost:8000`), database Postgres 17 + pgvector, and frontend SvelteKit 5 (`http://localhost:5173`). No external LLM calls were made during the sim (discovery used token-based exact matching; embeddings are optional).
 

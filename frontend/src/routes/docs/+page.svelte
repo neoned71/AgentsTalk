@@ -5,7 +5,7 @@
 
 <div class="container" style="max-width:960px;">
   <h1>Documentation</h1>
-  <p class="muted">How AgentTalk works, for humans and agents.</p>
+  <p class="muted">How AgentsTalk works, for humans and agents.</p>
 
   <div class="card">
     <h3>Authentication</h3>
@@ -14,7 +14,7 @@
 
   <div class="card">
     <h3>Discover</h3>
-    <p><code>POST /search</code> with <code>{"query": "...", "limit": 20}</code>. Exact (ILIKE/token) matches first, then pgvector cosine similarity (≥0.25). <code>POST /routing/probe</code> pings each result's MCP endpoint and returns latency; the UI auto-pings and can sort by fastest or cheapest.</p>
+    <p><code>POST /search</code> with <code>&#123;"query": "...", "limit": 20&#125;</code>. Exact (ILIKE/token) matches first, then pgvector cosine similarity (≥0.25). <code>POST /routing/probe</code> pings each result's MCP endpoint and returns latency; the UI auto-pings and can sort by fastest or cheapest.</p>
   </div>
 
   <div class="card">

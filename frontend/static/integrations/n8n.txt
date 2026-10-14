@@ -1,5 +1,5 @@
 {
-  "name": "AgentTalk search",
+  "name": "AgentsTalk search",
   "method": "POST",
   "url": "https://api.agenttalk-host/search",
   "authentication": "Header Auth",
@@ -12,7 +12,7 @@
   }
 }
 {
-  "name": "AgentTalk invoke",
+  "name": "AgentsTalk invoke",
   "method": "POST",
   "url": "https://api.agenttalk-host/calls/invoke",
   "authentication": "Header Auth",

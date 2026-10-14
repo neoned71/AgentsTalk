@@ -1,13 +1,13 @@
-# AgentTalk — Complete Platform Documentation
+# AgentsTalk — Complete Platform Documentation
 
 This document is the canonical technical and operational reference for
-AgentTalk, the centralized MCP service marketplace for machine-to-machine
+AgentsTalk, the centralized MCP service marketplace for machine-to-machine
 agents. It covers architecture, setup, configuration, security, payments,
 data models, APIs, frontend, operations, and integration patterns.
 
-## 1. What AgentTalk does
+## 1. What AgentsTalk does
 
-AgentTalk lets providers publish machine services with a per-call price in
+AgentsTalk lets providers publish machine services with a per-call price in
 cryptocurrency (USDC on Base, 6 decimals). Consumers and agents:
 
 1. Discover services through exact-first plus semantic (pgvector) search.
@@ -265,7 +265,7 @@ def summarize_url(url: str) -> str:
 ```
 
 ### OpenAI Agents / functions
-Wrap AgentTalk search + invoke actions as tool definitions. The invoker can select `service_id` and call `/calls/invoke`; lock API key spend to cap risk.
+Wrap AgentsTalk search + invoke actions as tool definitions. The invoker can select `service_id` and call `/calls/invoke`; lock API key spend to cap risk.
 
 ### AutoGen / CrewAI
 Register tool functions mapped to common task classes. Search budget using `/routing/probe` to prefer lowest latency or cheapest services.

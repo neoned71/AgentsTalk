@@ -21,7 +21,7 @@ class X402PaymentRequirements:
             "network": self.chain,
             "maxAmountRequired": str(self.price_atomic),
             "resource": None,
-            "description": "AgentTalk service call",
+            "description": "AgentsTalk service call",
             "mimeType": "application/json",
             "payTo": self.pay_to,
             "maxTimeoutSeconds": 300,

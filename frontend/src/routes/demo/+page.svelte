@@ -36,7 +36,7 @@
   <div class="demo-head">
     <div>
       <h1>Demo replay</h1>
-      <p class="muted">Self-running walkthrough of a real AgentTalk end-to-end flow. {flow ? `v${flow.version}` : ''}</p>
+      <p class="muted">Self-running walkthrough of a real AgentsTalk end-to-end flow. {flow ? `v${flow.version}` : ''}</p>
     </div>
     <div class="demo-controls">
       <button class="ghost" onclick={reset}>Reset</button>

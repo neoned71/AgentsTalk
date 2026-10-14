@@ -2,7 +2,7 @@
   <h1>Security</h1>
   <p class="muted">Security practices and reporting.</p>
   <div class="card">
-    <p>Security controls include domain-verified publishers, 30-day escrow for cashback, scoped agent API keys with spend caps, spend policy enforcement, receipt voiding on failed calls, domain ownership checks via <code>/.well-known</code>, and domain/channel separation. To report a vulnerability, email security@agenttalk.local with details and reproduction steps. Do not publicly disclose before we acknowledge. We aim to acknowledge within 72 hours.</p>
+    <p>Security controls include domain-verified publishers, 30-day escrow for cashback, scoped agent API keys with spend caps, spend policy enforcement, receipt voiding on failed calls, domain ownership checks via <code>/.well-known</code>, and domain/channel separation. To report a vulnerability, email security@agentsstalk.local with details and reproduction steps. Do not publicly disclose before we acknowledge. We aim to acknowledge within 72 hours.</p>
   </div>
 </div>
 <style>

@@ -1,5 +1,5 @@
 {
-  "title": "AgentTalk end-to-end demo replay",
+  "title": "AgentsTalk end-to-end demo replay",
   "version": "0.1",
   "baseUrl": "http://localhost:8000",
   "frontend": "http://localhost:5173",

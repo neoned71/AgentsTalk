@@ -72,7 +72,7 @@
     <div class="sitebar-inner">
       <a href="/" class="brand">
         <span class="brand-dot"></span>
-        <span class="brand-name">AgentTalk</span>
+        <span class="brand-name">AgentsTalk</span>
       </a>
 
       <nav class="site-nav" aria-label="primary">
@@ -92,7 +92,7 @@
           <span class="user-chip">{user.display_name || user.email}</span>
           <button class="ghost" onclick={logout}>Log out</button>
         {:else}
-          <a href="/login" class="login-btn">Log in</a>
+          <a href="/login" class="login-btn">Get started</a>
         {/if}
       </div>
     </div>
@@ -106,7 +106,7 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <span class="brand-dot"></span>
-        <span>AgentTalk</span>
+        <span>AgentsTalk</span>
         <span class="footer-meta">machine service registry · v0.1</span>
       </div>
       <nav class="footer-nav">
@@ -115,7 +115,7 @@
         {/each}
       </nav>
       <div class="footer-legal">
-        © {new Date().getFullYear()} AgentTalk. Code licensed under the MIT License. Trading is at your own risk.
+        © {new Date().getFullYear()} AgentsTalk. Code licensed under the MIT License. Trading is at your own risk.
       </div>
     </div>
   </footer>

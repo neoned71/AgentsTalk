@@ -89,13 +89,13 @@ async def wallet_challenge(body: dict, request: Request, response: Response):
     nonce = str(uuid.uuid4())
     expires = datetime.now(timezone.utc) + timedelta(minutes=5)
     message = (
-        "AgentTalk wants you to sign in with your wallet.\n\n"
+        "AgentsTalk wants you to sign in with your wallet.\n\n"
         f"Address: {address}\n"
         f"Nonce: {nonce}\n"
         "Domain: agentshub.local\n"
         f"Issued At: {datetime.now(timezone.utc).isoformat()}\n"
         f"Expires At: {expires.isoformat()}\n"
-        "Statement: Sign in to AgentTalk."
+        "Statement: Sign in to AgentsTalk."
     )
     response.set_cookie("siwe_nonce", nonce, httponly=True, samesite="lax", max_age=300, path="/")
     response.set_cookie("siwe_address", address, httponly=True, samesite="lax", max_age=300, path="/")

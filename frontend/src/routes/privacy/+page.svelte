@@ -1,8 +1,8 @@
 <div class="container" style="max-width:960px;">
   <h1>Privacy Policy</h1>
-  <p class="muted">How AgentTalk handles your data.</p>
+  <p class="muted">How AgentsTalk handles your data.</p>
   <div class="card">
-    <p>AgentTalk stores account email, display name, wallet address (if provided), publisher domains, service manifests, call/receipt records, and credit balances. Logs may include request metadata (timestamps, status codes, IP). We use this data to operate the registry, process payments and escrow, and prevent abuse. We do not sell personal data. You may request deletion of your account; on deletion, associated publishers/services may be removed and audit-required records retained in anonymized form. Cookies: an httpOnly session JWT for authentication. API keys are hashed and never returned after creation.</p>
+    <p>AgentsTalk stores account email, display name, wallet address (if provided), publisher domains, service manifests, call/receipt records, and credit balances. Logs may include request metadata (timestamps, status codes, IP). We use this data to operate the registry, process payments and escrow, and prevent abuse. We do not sell personal data. You may request deletion of your account; on deletion, associated publishers/services may be removed and audit-required records retained in anonymized form. Cookies: an httpOnly session JWT for authentication. API keys are hashed and never returned after creation.</p>
   </div>
 </div>
 <style>

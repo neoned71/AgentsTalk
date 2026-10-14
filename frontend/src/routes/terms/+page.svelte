@@ -1,8 +1,8 @@
 <div class="container" style="max-width:960px;">
   <h1>Terms of Service</h1>
-  <p class="muted">Using AgentTalk.</p>
+  <p class="muted">Using AgentsTalk.</p>
   <div class="card">
-    <p>By using AgentTalk you agree to these terms. Providers are responsible for their services, uptime, and outputs. Consumers are responsible for their calls, spend caps, and prompt/output handling. AgentTalk provides discovery, routing, payment rails, and escrow “as is”. Payments are final except within the 30-day cashback window for failed calls. Prohibited: fraudulent listings, spam, abuse, attempting to bypass escrow or rate limits. AgentTalk may suspend accounts or services that violate these terms. Fees (2%) are deducted from each call. Service-level guarantees are between provider and consumer.</p>
+    <p>By using AgentsTalk you agree to these terms. Providers are responsible for their services, uptime, and outputs. Consumers are responsible for their calls, spend caps, and prompt/output handling. AgentsTalk provides discovery, routing, payment rails, and escrow “as is”. Payments are final except within the 30-day cashback window for failed calls. Prohibited: fraudulent listings, spam, abuse, attempting to bypass escrow or rate limits. AgentsTalk may suspend accounts or services that violate these terms. Fees (2%) are deducted from each call. Service-level guarantees are between provider and consumer.</p>
   </div>
 </div>
 <style>

@@ -35,7 +35,7 @@
     { id: 'vercel', name: 'Vercel AI SDK', description: 'Wire search and invoke in TypeScript tool definitions.', steps: ['Install ai and zod.', 'Define parameters with valid schema.', 'Fetch results for /search and /calls/invoke.', 'Pass tools into generateText or streamText.', 'Add server-side env and secret management.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
     { id: 'n8n', name: 'n8n', description: 'Use Header Auth and HTTP nodes to automate discovery and calls.', steps: ['Create an HTTP credential with Authorization header.', 'Search in one request node.', 'Extract service_id using a Function node.', 'Call /calls/invoke for execution.', 'Branch on 402 for wallet payments.'] , env: 'HUB URL, API token' },
     { id: 'curl', name: 'HTTP / curl', description: 'Use shell and any HTTP client in any language.', steps: ['Export HUB and KEY environment variables.', 'List service candidates with search.', 'Record candidate service_id.', 'Invoke and inspect returned endpoint.', 'Productize with retry and key budgeting.'] , env: 'HUB, KEY' },
-    { id: 'fastapi', name: 'FastAPI proxy', description: 'Wrap AgentTalk behind your own backend.', steps: ['Load HUB and KEY from environment.', 'Implement a gateway route.', 'Forward payload as request_payload.', 'Return JSON result to callers.', 'Handle payment required properly.'] , env: 'HUB, KEY' }
+    { id: 'fastapi', name: 'FastAPI proxy', description: 'Wrap AgentsTalk behind your own backend.', steps: ['Load HUB and KEY from environment.', 'Implement a gateway route.', 'Forward payload as request_payload.', 'Return JSON result to callers.', 'Handle payment required properly.'] , env: 'HUB, KEY' }
   ];
   const guide = $derived(guides.find(g => g.id === activeTool) ?? guides[0]);
 
@@ -102,7 +102,7 @@
 </script>
 
 <svelte:head>
-  <title>AgentTalk — machine service hub</title>
+  <title>AgentsTalk — machine service hub</title>
   <meta name="description" content="Discovery and payments for machine-to-machine services." />
 </svelte:head>
 
@@ -295,7 +295,7 @@
       <h2>Thesis</h2>
     </div>
     <p class="lead-plain">
-      HTTP gave humans pages. MCP gave agents tools. AgentTalk gives the machine economy
+      HTTP gave humans pages. MCP gave agents tools. AgentsTalk gives the machine economy
       a registry: one searchable index, one payment rail, one settlement window.
     </p>
     <div class="cols3">
@@ -384,7 +384,7 @@
 
 <footer class="footer">
   <div class="container footrow">
-    <span>AgentTalk — machine service registry</span>
+    <span>AgentsTalk — machine service registry</span>
     <span class="muted">MCP · x402 · USDC on Base</span>
   </div>
 </footer>

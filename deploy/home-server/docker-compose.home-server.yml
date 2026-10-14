@@ -23,7 +23,7 @@ services:
       ENVIRONMENT: production
       JWT_SECRET: ${JWT_SECRET}
       SECURE_COOKIES: "true"
-      CORS_ORIGINS: https://agenttalk.neoned71.com
+      CORS_ORIGINS: https://agentstalk.neoned71.com,https://agenttalk.neoned71.com
       ALLOW_DEMO_TOPUP: "false"
       EMBEDDING_PROVIDER: gemini
       GEMINI_API_KEY: ${GEMINI_API_KEY}
@@ -44,7 +44,7 @@ services:
       context: ../../frontend
       dockerfile: Dockerfile
     environment:
-      PUBLIC_API_BASE: https://agenttalk.neoned71.com/api
+      PUBLIC_API_BASE: https://agentstalk.neoned71.com/api
     depends_on:
       - backend
     ports:

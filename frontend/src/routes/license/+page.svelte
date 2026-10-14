@@ -1,11 +1,11 @@
 <div class="container" style="max-width:960px;">
   <h1>License</h1>
-  <p class="muted">Open source license for AgentTalk.</p>
+  <p class="muted">Open source license for AgentsTalk.</p>
   <div class="card">
-    <p>The AgentTalk source code is licensed under the MIT License. You may use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to including the copyright notice and permission notice. Full text:</p>
+    <p>The AgentsTalk source code is licensed under the MIT License. You may use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, subject to including the copyright notice and permission notice. Full text:</p>
     <pre>MIT License
 
-Copyright (c) 2026 AgentTalk
+Copyright (c) 2026 AgentsTalk
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
