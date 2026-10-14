@@ -168,7 +168,7 @@
   .row-block .k { display:block; margin-bottom:4px; }
   pre { margin:0; padding:10px 12px; background:#05070a; border-radius:6px; color:#b9c3d1; font-size:11px; overflow:auto; font-family:ui-monospace,SFMono-Regular,monospace; }
 
-  .flow-strip { display:flex; align-items:center; gap:6px; overflow-x:auto; padding:12px 4px; }
+  .flow-strip { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px; padding:12px 4px; }
   .strip-node { padding:6px 10px; background:#05070a; color:#64748b; font-size:10px; letter-spacing:.1em; text-transform:uppercase; border-radius:4px; font-family:ui-monospace,monospace; transition:all .2s; }
   .strip-node.active { background:#4ade80; color:#04120a; font-weight:700; }
   .strip-node.done { color:#4ade80; }
