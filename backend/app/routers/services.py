@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth import get_current_user
+from app.auth import get_current_user, get_current_user_optional
 from app.db import get_session
 from app.models import Publisher, Service, User
 from app.schemas import ServiceCreate, ServiceOut
@@ -55,7 +55,7 @@ async def publish_service(body: dict, user: User = Depends(get_current_user), se
 
 
 @router.get("/{service_id}")
-async def get_service(service_id: str, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+async def get_service(service_id: str, user: User = Depends(get_current_user_optional), session: AsyncSession = Depends(get_session)):
     svc = await session.get(Service, uuid.UUID(service_id))
     if not svc or not svc.active:
         raise HTTPException(404, "not found")
@@ -75,7 +75,7 @@ async def get_service(service_id: str, user: User = Depends(get_current_user), s
 
 
 @router.get("")
-async def list_services(limit: int = 50, publisher_id: Optional[str] = None, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+async def list_services(limit: int = 50, publisher_id: Optional[str] = None, user: User = Depends(get_current_user_optional), session: AsyncSession = Depends(get_session)):
     q = select(Service).where(Service.active.is_(True))
     if publisher_id:
         q = q.where(Service.publisher_id == uuid.UUID(publisher_id))

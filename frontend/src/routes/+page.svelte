@@ -11,6 +11,8 @@
   let activeTool = $state('mcp');
   let snippet = $state('Loading integration guide...');
   let copied = $state(false);
+  let showcaseServices = $state([]);
+  let showcaseLoading = $state(true);
 
   const iconMap = {
     mcp: '/icons/mcp.svg',
@@ -67,6 +69,8 @@
 
   let stage = $state(0);
 
+  $effect(() => { loadShowcase(); });
+
   $effect(() => {
     const id = setInterval(() => { stage = (stage + 1) % 4; }, 3200);
     return () => clearInterval(id);
@@ -78,6 +82,15 @@
     }, { threshold: 0.08 });
     io.observe(node);
     return { destroy() { io.disconnect(); } };
+  }
+
+  async function loadShowcase() {
+    try {
+      const r = await fetch(`${API}/services?limit=8`, { credentials: 'include' });
+      if (!r.ok) return;
+      showcaseServices = await r.json();
+    } catch (e) { showcaseServices = []; }
+    finally { showcaseLoading = false; }
   }
 
   async function search() {
@@ -182,6 +195,43 @@
     </p>
   </div>
 </div>
+
+<!-- SHOWCASE -->
+<section class="section" use:reveal>
+  <div class="container">
+    <div class="section-head">
+      <span class="section-id">MCP</span>
+      <h2>Curated MCP services</h2>
+      <span class="count">{showcaseServices.length} services</span>
+    </div>
+    <p class="section-sub">Seeded reference services agent owners can call immediately. Search, sort, inspect pricing, and probe latency.</p>
+    {#if showcaseLoading}
+      <p class="muted">Loading services…</p>
+    {:else if showcaseServices.length}
+      <div class="showcase-grid">
+        {#each showcaseServices as service}
+          <a class="showcase-card" href={`/service/${service.id}`}>
+            <div class="showcase-top">
+              <strong>{service.name}</strong>
+              <span class="price">{service.currency} {(service.price_atomic / 1e6).toFixed(6)}</span>
+            </div>
+            <p>{service.description}</p>
+            <div class="showcase-foot">
+              <span class="tag">{service.chain}</span>
+              <span class="tag">{service.mcp_endpoint}</span>
+            </div>
+          </a>
+        {/each}
+      </div>
+    {:else}
+      <p class="muted">No services available yet. Publish the first one.</p>
+    {/if}
+    <div class="showcase-actions">
+      <a class="btn" href="/discover">Discover more</a>
+      <a class="btn ghost" href="/publish">Publish a service</a>
+    </div>
+  </div>
+</section>
 
 <!-- DEMO -->
 <section class="section demo-section" use:reveal>
@@ -565,4 +615,17 @@
   .integrate-code code { font-family:ui-monospace,SFMono-Regular,monospace; }
   .integrate-note { color:#8b93a7; font-size:12px; margin-top:10px; }
   .integrate-note code { color:#9cc0ff; }
+  .showcase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 16px; }
+  .showcase-card { display: block; text-decoration: none; color: #e2e8f0; background: rgba(11, 15, 24, 0.72); border: 1px solid #1f2937; border-radius: 12px; padding: 16px; transition: transform .15s ease, border-color .15s ease; }
+  .showcase-card:hover { transform: translateY(-2px); border-color: #4ade80; }
+  .showcase-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .showcase-card p { color: #94a3b8; font-size: 13px; line-height: 1.5; margin: 0 0 12px; }
+  .showcase-foot { display: flex; gap: 6px; flex-wrap: wrap; font-size: 11px; color: #64748b; overflow: hidden; }
+  .showcase-foot .tag { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .section-sub { color: #8b93a7; max-width: 760px; line-height: 1.6; }
+  .showcase-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .showcase-actions .btn { padding: 10px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; text-decoration: none; }
+  .showcase-actions .btn.ghost { background: #0f1624; color: #e2e8f0; border: 1px solid #1f2937; }
+  .muted { color: #8b93a7; }
+
 </style>

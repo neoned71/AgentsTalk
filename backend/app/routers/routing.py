@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth import get_current_user
+from app.auth import get_current_user_optional
 from app.db import get_session
 from app.models import Service, User
 
@@ -36,7 +36,7 @@ async def _probe(endpoint: str) -> tuple[bool, int | None]:
 
 
 @router.post("/probe")
-async def probe(body: dict, user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
+async def probe(body: dict, user: User = Depends(get_current_user_optional), session: AsyncSession = Depends(get_session)):
     ids = body.get("service_ids") or []
     q = select(Service).where(Service.active.is_(True))
     if ids:
