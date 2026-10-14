@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import uuid
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth import get_current_user
+from app.auth import get_current_user, get_current_user_optional
 from app.db import get_session
 from app.models import Publisher, User
 from app.services.wellknown import fetch_manifests, normalize_services
@@ -43,11 +44,20 @@ async def my_publishers(user: User = Depends(get_current_user), session: AsyncSe
 
 
 @router.get("/{publisher_id}")
-async def get_publisher(publisher_id: str, session: AsyncSession = Depends(get_session)):
+async def get_publisher(publisher_id: str,
+                        caller: Optional[User] = Depends(get_current_user_optional),
+                        session: AsyncSession = Depends(get_session)):
     p = await session.get(Publisher, uuid.UUID(publisher_id))
     if not p:
         raise HTTPException(404, "not found")
-    return {"id": str(p.id), "domain": p.domain, "display_name": p.display_name, "verified": p.verified, "wallet_address": p.wallet_address}
+    expose_wallet = (caller is not None and (caller.role == "admin" or caller.id == p.user_id))
+    return {
+        "id": str(p.id),
+        "domain": p.domain,
+        "display_name": p.display_name,
+        "verified": p.verified,
+        "wallet_address": p.wallet_address if expose_wallet else None,
+    }
 
 
 @router.post("/import-domain")
