@@ -12,6 +12,19 @@
   let snippet = $state('Loading integration guide...');
   let copied = $state(false);
 
+  const iconMap = {
+    mcp: '/icons/mcp.svg',
+    langchain: '/icons/langchain.svg',
+    openai: '/icons/openai.svg',
+    autogen: '/icons/microsoft.svg',
+    crewai: '/icons/crewai.svg',
+    llamaindex: '/icons/llamaindex.svg',
+    vercel: '/icons/vercel.svg',
+    n8n: '/icons/n8n.svg',
+    curl: '/icons/curl.svg',
+    fastapi: '/icons/fastapi.svg'
+  };
+
   const guides = [
     { id: 'mcp', name: 'Claude / Cursor / Cline / Windsurf', description: 'Discover and expose a provider MCP endpoint through npx mcp-remote.', steps: ['Install the bridge: npm i -g mcp-remote', 'Search using /search and inspect the result payload.', 'Copy the selected service mcp_endpoint value.', 'Add it to your editor MCP JSON config.', 'Restart the editor and test tools/list / tools/call.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY or personal wallet' },
     { id: 'langchain', name: 'LangChain', description: 'Define search and invoke helpers, then wrap them as @tool.', steps: ['Set AGENTTALK_BASE and AGENTTALK_KEY environment variables.', 'Create reusable get_services/search and invoke functions.', 'Wrap them with the LangChain decorator or tool function.', 'Attach tools to the agent or chat chain.', 'Handle 402 responses for x402 wallet branch.'] , env: 'AGENTTALK_BASE, AGENTTALK_KEY' },
@@ -131,12 +144,15 @@
     <div class="tool-tabs">
       {#each tools as t}
         <button class="tool-tab" class:active={activeTool === t.id} type="button"
-                onclick={() => activeTool = t.id}>{t.name}</button>
+                onclick={() => activeTool = t.id}>
+          <img class="tool-icon" src={iconMap[t.id] || '/icons/mcp.svg'} alt="" width="15" height="15" />
+          {t.name}
+        </button>
       {/each}
     </div>
 
     <section class="guide-card">
-      <h3>{guide?.name}</h3>
+      <h3><img class="tool-icon" src={iconMap[activeTool] || '/icons/mcp.svg'} alt="" width="16" height="16" />{guide?.name}</h3>
       <p class="guide-desc">{guide?.description}</p>
       <ol class="guide-steps">
         {#each guide?.steps ?? [] as step}
@@ -533,6 +549,8 @@
   .tool-tab { border:0; background:#151b24; color:#b5c1cf; border-radius:999px;
                padding:7px 10px; font-size:11px; cursor:pointer; }
   .tool-tab.active { background:#4ade80; color:#07150d; font-weight:700; }
+  .tool-icon { border-radius:3px; background:#1a1f29; object-fit:contain;
+               vertical-align:text-bottom; }
   .integrate-code-shell { background:#070a0f; border-radius:12px; padding:10px;
                           overflow:hidden; }
   .code-head { display:flex; justify-content:space-between; align-items:center;
