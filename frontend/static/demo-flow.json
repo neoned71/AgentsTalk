@@ -4,32 +4,169 @@
   "baseUrl": "http://localhost:8000",
   "frontend": "http://localhost:5173",
   "actors": [
-    { "role": "provider", "email": "admin@agentshub.local" },
-    { "role": "consumer", "email": "sim@test.local" }
+    {
+      "role": "provider",
+      "email": "admin@agentshub.local"
+    },
+    {
+      "role": "consumer",
+      "email": "sim@test.local"
+    }
   ],
   "seededServices": [
-    { "name": "summarize-url", "price_atomic": 2000, "currency": "USDC" },
-    { "name": "translate-text", "price_atomic": 800, "currency": "USDC" },
-    { "name": "image-analyze", "price_atomic": 5000, "currency": "USDC" }
+    {
+      "name": "summarize-url",
+      "price_atomic": 2000,
+      "currency": "USDC"
+    },
+    {
+      "name": "translate-text",
+      "price_atomic": 800,
+      "currency": "USDC"
+    },
+    {
+      "name": "image-analyze",
+      "price_atomic": 5000,
+      "currency": "USDC"
+    }
   ],
   "steps": [
-    { "id": "landing", "ui": "hero", "note": "animated pipeline loops; guest search redirects to login" },
-    { "id": "login", "method": "POST", "path": "/auth/login", "status": 200, "auth": "cookie" },
-    { "id": "session", "method": "GET", "path": "/auth/me", "status": 200 },
-    { "id": "search", "method": "POST", "path": "/search", "payload": { "query": "summarize url", "limit": 5 }, "status": 200, "resultCount": 1, "top": "summarize-url", "match": "exact" },
-    { "id": "probe", "method": "POST", "path": "/routing/probe", "status": 200, "best": null, "note": "demo endpoints report down" },
-    { "id": "topup", "method": "POST", "path": "/billing/topup", "payload": { "amount_atomic": 5000 }, "status": 200 },
-    { "id": "balance", "method": "GET", "path": "/billing/balance", "status": 200, "balance_atomic": 100045200 },
-    { "id": "reserve", "method": "POST", "path": "/receipts/create", "status": 200, "receipt": "rcpt_TzbV7VdnZMfeJxgI", "amount_atomic": 2000, "receiptStatus": "reserved" },
-    { "id": "invoke-success", "method": "POST", "path": "/calls/invoke", "payload": { "receipt_number": "rcpt_TzbV7VdnZMfeJxgI", "success": true }, "status": 200, "callStatus": "settled", "receiptConsumed": true, "platformFeeAtomic": 40, "developerShareAtomic": 1960 },
-    { "id": "receipt-consumed", "method": "GET", "path": "/receipts", "status": 200, "note": "receipt now consumed" },
-    { "id": "reserve-fail", "method": "POST", "path": "/receipts/create", "status": 200, "receipt": "rcpt_qw4yhtJufMdxwLw7", "amount_atomic": 2000, "receiptStatus": "reserved" },
-    { "id": "invoke-fail", "method": "POST", "path": "/calls/invoke", "payload": { "receipt_number": "rcpt_qw4yhtJufMdxwLw7", "success": false }, "status": 200, "callStatus": "voided", "receiptConsumed": false },
-    { "id": "keys", "method": "POST", "path": "/keys", "status": 201, "note": "key shown once; spend cap enforced" },
-    { "id": "publish", "method": "POST", "path": "/publishers", "status": 201 },
-    { "id": "service", "method": "POST", "path": "/services", "status": 201, "embeddingSet": false },
-    { "id": "dashboard", "ui": "kpis + payouts + calls", "note": "auto-search on ?q=; search unlocks sections" },
-    { "id": "footer", "ui": "docs/privacy/terms/license/security", "note": "public, auth-exempt" }
+    {
+      "id": "landing",
+      "ui": "hero",
+      "note": "animated pipeline loops; guest search redirects to login"
+    },
+    {
+      "id": "login",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "auth": "cookie"
+    },
+    {
+      "id": "session",
+      "method": "GET",
+      "path": "/auth/me",
+      "status": 200
+    },
+    {
+      "id": "search",
+      "method": "POST",
+      "path": "/search",
+      "payload": {
+        "query": "summarize url",
+        "limit": 5
+      },
+      "status": 200,
+      "resultCount": 1,
+      "top": "summarize-url",
+      "match": "exact"
+    },
+    {
+      "id": "probe",
+      "method": "POST",
+      "path": "/routing/probe",
+      "status": 200,
+      "best": null,
+      "note": "demo endpoints report down"
+    },
+    {
+      "id": "topup",
+      "method": "POST",
+      "path": "/billing/topup",
+      "payload": {
+        "amount_atomic": 5000
+      },
+      "status": 200
+    },
+    {
+      "id": "balance",
+      "method": "GET",
+      "path": "/billing/balance",
+      "status": 200,
+      "balance_atomic": 100045200
+    },
+    {
+      "id": "reserve",
+      "method": "POST",
+      "path": "/receipts/create",
+      "status": 200,
+      "receipt": "rcpt_TzbV7VdnZMfeJxgI",
+      "amount_atomic": 2000,
+      "receiptStatus": "reserved"
+    },
+    {
+      "id": "invoke-success",
+      "method": "POST",
+      "path": "/calls/invoke",
+      "payload": {
+        "receipt_number": "rcpt_TzbV7VdnZMfeJxgI",
+        "success": true
+      },
+      "status": 200,
+      "callStatus": "settled",
+      "receiptConsumed": true,
+      "platformFeeAtomic": 40,
+      "developerShareAtomic": 1960
+    },
+    {
+      "id": "receipt-consumed",
+      "method": "GET",
+      "path": "/receipts",
+      "status": 200,
+      "note": "receipt now consumed"
+    },
+    {
+      "id": "reserve-fail",
+      "method": "POST",
+      "path": "/receipts/create",
+      "status": 200,
+      "receipt": "rcpt_qw4yhtJufMdxwLw7",
+      "amount_atomic": 2000,
+      "receiptStatus": "reserved"
+    },
+    {
+      "id": "invoke-fail",
+      "method": "POST",
+      "path": "/calls/invoke",
+      "payload": {
+        "receipt_number": "rcpt_qw4yhtJufMdxwLw7",
+        "success": false
+      },
+      "status": 200,
+      "callStatus": "voided",
+      "receiptConsumed": false
+    },
+    {
+      "id": "keys",
+      "method": "POST",
+      "path": "/keys",
+      "status": 201,
+      "note": "key shown once; spend cap enforced"
+    },
+    {
+      "id": "publish",
+      "method": "POST",
+      "path": "/publishers",
+      "status": 201
+    },
+    {
+      "id": "service",
+      "method": "POST",
+      "path": "/services",
+      "status": 201,
+      "embeddingSet": false
+    },
+    {
+      "id": "dashboard",
+      "ui": "kpis + payouts + calls",
+      "note": "auto-search on ?q=; search unlocks sections"
+    },
+    {
+      "id": "footer",
+      "ui": "docs/privacy/terms/license/security",
+      "note": "public, auth-exempt"
+    }
   ],
   "ledger": {
     "platformFeeBps": 200,
@@ -37,5 +174,3 @@
     "embeddingDim": 768
   }
 }
-EOF
-python3 -c "import json; d=json.load(open('/Users/neoned71/Documents/projects/agentsTalk/frontend/static/demo-flow.json')); print('valid JSON, steps:', len(d['steps']))"
