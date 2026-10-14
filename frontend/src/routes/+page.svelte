@@ -143,7 +143,7 @@
           <li>{step}</li>
         {/each}
       </ol>
-      <p class="guide-env"><strong>Required:</strong> {guide()?.env}</p>
+      <p class="guide-env"><strong>Required:</strong> {guide?.env}</p>
     </section>
 
     <div class="integrate-code-shell">
