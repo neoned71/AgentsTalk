@@ -52,6 +52,7 @@
     { href: '/my/services', label: 'Services' },
     { href: '/my/calls', label: 'Calls' },
     { href: '/credits', label: 'Credits' },
+    { href: '/wallet', label: 'Wallet' },
     { href: '/keys', label: 'Keys' },
     { href: '/dashboard', label: 'Dashboard' },
   ];
