@@ -108,9 +108,7 @@
     </div>
   {/if}
 
-  {#if note}
-    <p class="anote-text">{note}</p>
-  {/if}
+  <!-- textual caption intentionally removed; steps above carry the explanation -->
 </div>
 
 <style>
