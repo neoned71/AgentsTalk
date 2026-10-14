@@ -20,6 +20,7 @@
   let { children } = $props();
   let user = $state(null);
   let checked = $state(false);
+  const REPO_URL = 'https://github.com/neoned71/AgentsTalk';
 
   async function loadMe() {
     try {
@@ -88,6 +89,9 @@
       </nav>
 
       <div class="site-actions">
+        <a href={REPO_URL} class="github-btn" aria-label="AgentsTalk GitHub repository" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.19 1.18a11.1 11.1 0 0 1 5.82 0c2.22-1.49 3.19-1.18 3.19-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.35.78 1.04.78 2.1v3.1c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
         {#if user}
           <span class="user-chip">{user.display_name || user.email}</span>
           <button class="ghost" onclick={logout}>Log out</button>
@@ -108,6 +112,10 @@
         <span class="brand-dot"></span>
         <span>AgentsTalk</span>
         <span class="footer-meta">machine service registry · v0.1</span>
+        <a href={REPO_URL} class="footer-github" aria-label="AgentsTalk GitHub repository" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.19 1.18a11.1 11.1 0 0 1 5.82 0c2.22-1.49 3.19-1.18 3.19-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.68.41.35.78 1.04.78 2.1v3.1c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+          <span>GitHub</span>
+        </a>
       </div>
       <nav class="footer-nav">
         {#each footerLinks as l}
@@ -165,6 +173,12 @@
   .user-chip { font-size: 12px; color: #b9c3d1; background: #0f1624; padding: 7px 11px; border-radius: 999px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ghost { background: transparent; color: #b9c3d1; padding: 7px 11px; border-radius: 6px; cursor: pointer; font-size: 12px; }
   .login-btn { background: #4ade80; color: #04120a; padding: 8px 13px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .github-btn { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; color: #9aa4b2; text-decoration: none; background: #0f1624; border: 1px solid #1f2937; transition: color .15s, background .15s, transform .15s; }
+  .github-btn:hover { color: #e7ecf3; background: #162033; transform: translateY(-1px); }
+  .github-btn svg { width: 18px; height: 18px; }
+  .footer-github { display: inline-flex; align-items: center; gap: 6px; color: #9aa4b2; text-decoration: none; font-size: 12px; font-weight: 600; }
+  .footer-github:hover { color: #4ade80; }
+  .footer-github svg { width: 16px; height: 16px; }
   @media (max-width: 860px) {
     .sitebar-inner { grid-template-columns: auto auto; }
     .site-nav { display: none; }
