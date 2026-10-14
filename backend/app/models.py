@@ -146,3 +146,16 @@ class Receipt(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     consumed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     voided_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+
+
+class AnalyticsEvent(Base):
+    __tablename__ = "analytics_events"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    visitor_id: Mapped[str] = mapped_column(Text, nullable=False, index=True)
+    path: Mapped[str] = mapped_column(Text, nullable=False, index=True)
+    event: Mapped[str] = mapped_column(String(32), default="page_view")
+    duration_ms: Mapped[int] = mapped_column(Integer, default=0)
+    referrer: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

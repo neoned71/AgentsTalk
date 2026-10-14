@@ -1,6 +1,8 @@
 <!-- src/routes/+layout.svelte -->
 <script>
-  import { goto } from '$app/navigation';
+  import { goto, afterNavigate } from '$app/navigation';
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import '../app.css';
 
@@ -20,6 +22,10 @@
   let { children } = $props();
   let user = $state(null);
   let checked = $state(false);
+
+  let analyticsVisitorId = $state('');
+  let analyticsCurrentPath = $state('');
+  let analyticsStartedAt = 0;
   const REPO_URL = 'https://github.com/neoned71/AgentsTalk';
 
   async function loadMe() {
@@ -66,6 +72,53 @@
     { href: '/license', label: 'License' },
     { href: '/security', label: 'Security' },
   ];
+
+  function analyticsSend(path, duration = 0, event = 'page_view') {
+    if (!browser || !analyticsVisitorId || !path) return;
+    fetch(`${API}/analytics/event`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        visitor_id: analyticsVisitorId,
+        path,
+        event,
+        duration_ms: duration,
+        referrer: typeof document !== 'undefined' ? document.referrer : null,
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null
+      }),
+      keepalive: true
+    }).catch(() => {});
+  }
+
+  onMount(() => {
+    if (!browser) return;
+    let id = localStorage.getItem('agentsstalk_visitor_id');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('agentsstalk_visitor_id', id);
+    }
+    analyticsVisitorId = id;
+    analyticsCurrentPath = window.location.pathname;
+    analyticsStartedAt = Date.now();
+    analyticsSend(analyticsCurrentPath, 0);
+    window.addEventListener('pagehide', () => {
+      analyticsSend(analyticsCurrentPath, Date.now() - analyticsStartedAt);
+    });
+  });
+
+  afterNavigate((navigation) => {
+    if (!browser || !navigation.to?.url?.pathname) return;
+    const newPath = navigation.to.url.pathname;
+    if (analyticsCurrentPath && newPath !== analyticsCurrentPath) {
+      analyticsSend(analyticsCurrentPath, Date.now() - analyticsStartedAt);
+    }
+    analyticsCurrentPath = newPath;
+    analyticsStartedAt = Date.now();
+    if (navigation.from) {
+      analyticsSend(newPath, 0);
+    }
+  });
+
 </script>
 
 <div class="site-shell">

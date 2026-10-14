@@ -9,8 +9,9 @@ from sqlalchemy import text
 
 from app.config import settings
 from app.db import engine, Base, SessionLocal
+from app.models import AnalyticsEvent  # noqa: F401
 from app.services.seed import seed_curated_services
-from app.routers import publishers, services, search, calls, payouts, auth, receipts, billing, keys, routing
+from app.routers import publishers, services, analytics, search, calls, payouts, auth, receipts, billing, keys, routing
 from app.routers.payouts import release_due
 
 
@@ -98,6 +99,7 @@ app.include_router(receipts.router)
 app.include_router(billing.router)
 app.include_router(keys.router)
 app.include_router(routing.router)
+app.include_router(analytics.router)
 
 
 @app.get("/health")
