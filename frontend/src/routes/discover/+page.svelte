@@ -125,27 +125,27 @@
 <style>
   .muted { color:#8b93a7; } .small { font-size:12px; } .warn { color:#fca5a5; }
   h1 { font-size:clamp(26px,4vw,40px); margin:0 0 4px; font-weight:800; }
-  .searchbar { display:flex; gap:0; margin:16px 0; border:1px solid #1f2937; background:#0d121c; }
+  .searchbar { display:flex; gap:0; margin:16px 0; border:1px solid #161d2a; background:#080b11; }
   .sinput { flex:1; background:transparent; border:none; outline:none; color:#e2e8f0; font-size:15px; padding:12px 14px; font-family:ui-monospace,SFMono-Regular,monospace; }
-  .btn { background:#4ade80; color:#080a0f; border:none; padding:0 20px; font-weight:700; font-size:12px; letter-spacing:.08em; cursor:pointer; }
+  .btn { background:#4ade80; color:#040609; border:none; padding:0 20px; font-weight:700; font-size:12px; letter-spacing:.08em; cursor:pointer; }
   .btn:disabled { opacity:.6; cursor:default; }
   .toolbar { display:flex; justify-content:space-between; align-items:center; margin:10px 0 14px; gap:12px; flex-wrap:wrap; }
-  .toggle { display:flex; border:1px solid #1f2937; }
-  .toggle button { background:#0d121c; color:#94a3b8; border:none; padding:6px 12px; font-size:11px; letter-spacing:.08em; cursor:pointer; font-weight:700; }
-  .toggle button.active { background:#4ade80; color:#080a0f; }
+  .toggle { display:flex; border:1px solid #161d2a; }
+  .toggle button { background:#080b11; color:#94a3b8; border:none; padding:6px 12px; font-size:11px; letter-spacing:.08em; cursor:pointer; font-weight:700; }
+  .toggle button.active { background:#4ade80; color:#040609; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
-  .card { display:block; text-decoration:none; color:#e2e8f0; border:1px solid #1f2937; background:#0d121c; padding:16px; position:relative; transition:border-color .15s; }
+  .card { display:block; text-decoration:none; color:#e2e8f0; border:1px solid #161d2a; background:#080b11; padding:16px; position:relative; transition:border-color .15s; }
   .card:hover { border-color:#4ade80; }
   .card.best { border-color:#4ade80; box-shadow:0 0 0 1px #4ade80; }
   .card-row { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px; }
   .price { color:#4ade80; font-family:ui-monospace,SFMono-Regular,monospace; font-size:12px; }
   .card-desc { color:#94a3b8; font-size:13px; margin:0 0 10px; }
   .card-foot { display:flex; gap:6px; flex-wrap:wrap; font-size:11px; color:#64748b; }
-  .tag { padding:2px 8px; border:1px solid #1f2937; font-family:ui-monospace,SFMono-Regular,monospace; }
+  .tag { padding:2px 8px; border:1px solid #161d2a; font-family:ui-monospace,SFMono-Regular,monospace; }
   .tag.hot { border-color:#4ade80; color:#4ade80; }
   .score { font-family:ui-monospace,SFMono-Regular,monospace; }
-  .best-banner { margin-top:8px; font-size:10px; letter-spacing:.12em; color:#080a0f; background:#4ade80; padding:3px 6px; display:inline-block; }
-  .note { margin:14px 0 18px; padding:12px 14px; background:#0d121c; border:1px solid #1f2937; font-size:12px; color:#94a3b8; line-height:1.5; }
+  .best-banner { margin-top:8px; font-size:10px; letter-spacing:.12em; color:#040609; background:#4ade80; padding:3px 6px; display:inline-block; }
+  .note { margin:14px 0 18px; padding:12px 14px; background:#080b11; border:1px solid #161d2a; font-size:12px; color:#94a3b8; line-height:1.5; }
   .note-id { display:block; font-family:ui-monospace,SFMono-Regular,monospace; font-size:10px; color:#4ade80; letter-spacing:.12em; margin-bottom:4px; }
   .container { max-width:1120px; margin:0 auto; padding:0 24px; }
 </style>
