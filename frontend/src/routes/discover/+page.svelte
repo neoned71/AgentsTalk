@@ -13,6 +13,8 @@
   let latencies = $state({});
   let browseServices = $state([]);
   let browseLoading = $state(true);
+  let priceFilter = $state('all'); // all | free | paid
+  let categoryFilter = $state('All');
 
   async function search() {
     if (!query.trim()) return;
@@ -52,7 +54,7 @@
 
   async function loadBrowse() {
     try {
-      const r = await fetch(`${API}/services?limit=12`, { credentials: 'include' });
+      const r = await fetch(`${API}/services?limit=100`, { credentials: 'include' });
       if (r.ok) browseServices = await r.json();
       else browseServices = [];
     } catch (e) { browseServices = []; }
@@ -75,6 +77,25 @@
   });
 
   $effect(() => { if (q && !loading) { query = q; search(); } });
+
+  function categoryOf(item) {
+    const t = `${item.name || ''} ${item.description || ''}`.toLowerCase();
+    if (/ride/.test(t)) return 'Rides';
+    if (/movie|cinema|showtime/.test(t)) return 'Movies';
+    if (/restaurant|table|reservation/.test(t)) return 'Restaurant';
+    if (/shop|amazon|marketplace|product/.test(t)) return 'Shopping';
+    if (/cloud|instance/.test(t)) return 'Cloud';
+    return 'Tools';
+  }
+  function priceAllowed(item) {
+    const free = (item.price_atomic || 0) === 0;
+    if (priceFilter === 'free') return free;
+    if (priceFilter === 'paid') return !free;
+    return true;
+  }
+
+  let filteredBrowse = $derived(browseServices.filter(item => priceAllowed(item) && (categoryFilter === 'All' || categoryOf(item) === categoryFilter)));
+  let filteredResults = $derived(sortedResults().filter(item => priceAllowed(item) && (categoryFilter === 'All' || categoryOf(item) === categoryFilter)));
   $effect(() => { if (!loading) { loadBrowse(); } });
 
   let bestId = $derived(() => {
@@ -88,6 +109,27 @@
 <div class="container">
   <h1>Discover services</h1>
   <p class="muted">Exact matches first, then semantically similar. Auto-pinged for latency. Choose fastest or cheapest.</p>
+  <div class="filters">
+    <label><span class="filter-label">Category</span>
+      <select bind:value={categoryFilter}>
+        <option>All</option>
+        <option>Rides</option>
+        <option>Movies</option>
+        <option>Restaurant</option>
+        <option>Shopping</option>
+        <option>Cloud</option>
+        <option>Tools</option>
+      </select>
+    </label>
+    <label><span class="filter-label">Price</span>
+      <select bind:value={priceFilter}>
+        <option value="all">All</option>
+        <option value="free">Free only</option>
+        <option value="paid">Paid only</option>
+      </select>
+    </label>
+    <span class="meta">{filteredBrowse.length} available / {filteredResults.length} shown</span>
+  </div>
   <div class="searchbar">
     <input class="sinput" bind:value={query} placeholder="Try: summarize url, translate text..." onkeydown={(e)=>e.key==='Enter' && search()} />
     <button class="btn" onclick={search} disabled={loading}>{loading ? 'Searching…' : 'SEARCH'}</button>
@@ -97,10 +139,10 @@
   {#if (!invoked || !results.length) && browseServices.length}
     <div class="browse-head">
       <strong>Available services</strong>
-      <span class="meta">{browseServices.length} services</span>
+      <span class="meta">{filteredBrowse.length} of {browseServices.length}</span>
     </div>
     <div class="grid">
-      {#each browseServices as r}
+      {#each filteredBrowse as r}
         <a class="card" href={`/service/${r.id}`}>
           <div class="card-row">
             <strong>{r.name}</strong>
@@ -114,19 +156,20 @@
         </a>
       {/each}
     </div>
+    {#if !filteredBrowse.length}<p class="muted">No services match these filters.</p>{/if}
   {/if}
 
 
-  {#if results.length}
+  {#if filteredResults.length}
     <div class="toolbar">
-      <span class="muted small">{results.length} results · {probing ? 'pinging…' : 'pinged'}</span>
+      <span class="muted small">{filteredResults.length} of {results.length} results · {probing ? 'pinging…' : 'pinged'}</span>
       <div class="toggle">
         <button class:active={sortMode==='best'} onclick={() => (sortMode='best')}>FASTEST</button>
         <button class:active={sortMode==='cheapest'} onclick={() => (sortMode='cheapest')}>CHEAPEST</button>
       </div>
     </div>
     <div class="grid">
-      {#each sortedResults() as r}
+      {#each filteredResults as r}
         <a class="card" class:best={bestId() === r.id} href={`/service/${r.id}`}>
           <div class="card-row">
             <strong>{r.name}</strong>
@@ -176,5 +219,9 @@
   .best-banner { margin-top:8px; font-size:10px; letter-spacing:.12em; color:#040609; background:#4ade80; padding:3px 6px; display:inline-block; }
   .note { margin:14px 0 18px; padding:12px 14px; background:#080b11; font-size:12px; color:#94a3b8; line-height:1.5; }
   .note-id { display:block; font-family:ui-monospace,SFMono-Regular,monospace; font-size:10px; color:#4ade80; letter-spacing:.12em; margin-bottom:4px; }
+  .filters { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:12px 0; padding:12px; background:#080b11; border:1px solid #121a2a; }
+  .filters label { display:flex; flex-direction:column; gap:4px; color:#8b93a7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
+  .filters select { background:#07090f; color:#e2e8f0; border:1px solid #121a2a; padding:8px 10px; font-size:13px; }
+  .filter-label { font-weight:700; }
   .container { max-width:1120px; margin:0 auto; padding:0 24px; }
 </style>

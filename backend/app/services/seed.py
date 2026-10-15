@@ -122,6 +122,66 @@ CURATED_SERVICES: List[Dict[str, Any]] = [
             {"name": "list_thoughts", "description": "List the current reasoning sequence."},
         ],
     },
+    {
+        "name": "Simulated Ride Booking",
+        "description": "Free simulated ride-booking service for testing agents: check availability, book rides, cancel trips, and track ETAs without any real payment.",
+        "mcp_endpoint": "https://agentstalk.neoned71.com/api/simulator/ride",
+        "price_atomic": 0,
+        "tool_schemas": [
+            {"name": "check_ride_availability", "description": "Check available rides near a pickup location."},
+            {"name": "book_ride", "description": "Create a simulated ride reservation."},
+            {"name": "cancel_ride", "description": "Cancel a simulated ride reservation."},
+            {"name": "track_ride", "description": "Get live ETA and status for a simulated ride."},
+        ],
+    },
+    {
+        "name": "Simulated Movie Ticket Booking",
+        "description": "Free simulated cinema booking service for testing: browse movies, choose showtimes, reserve seats, and receive confirmations.",
+        "mcp_endpoint": "https://agentstalk.neoned71.com/api/simulator/movie",
+        "price_atomic": 0,
+        "tool_schemas": [
+            {"name": "list_movies", "description": "List available movies and showtimes."},
+            {"name": "select_showtime", "description": "Choose a theater and showtime."},
+            {"name": "reserve_seats", "description": "Reserve seats for a selected show."},
+            {"name": "cancel_booking", "description": "Cancel a simulated movie reservation."},
+        ],
+    },
+    {
+        "name": "Simulated Restaurant Table Booking",
+        "description": "Free simulated restaurant reservation service for testing agents: check availability, book tables, modify parties, and cancel reservations.",
+        "mcp_endpoint": "https://agentstalk.neoned71.com/api/simulator/restaurant",
+        "price_atomic": 0,
+        "tool_schemas": [
+            {"name": "check_availability", "description": "Check table availability for a date and party size."},
+            {"name": "book_table", "description": "Create a simulated restaurant reservation."},
+            {"name": "modify_reservation", "description": "Update guest count or time."},
+            {"name": "cancel_reservation", "description": "Cancel a simulated restaurant reservation."},
+        ],
+    },
+    {
+        "name": "Simulated Shopping Marketplace",
+        "description": "Free simulated shopping service inspired by marketplace flows: search products, inspect details, build carts, and test checkout without charging.",
+        "mcp_endpoint": "https://agentstalk.neoned71.com/api/simulator/shopping",
+        "price_atomic": 0,
+        "tool_schemas": [
+            {"name": "search_products", "description": "Search demonstration products."},
+            {"name": "get_product", "description": "Get product details and stock."},
+            {"name": "add_to_cart", "description": "Add a demonstration product to cart."},
+            {"name": "checkout", "description": "Simulate checkout and return an order ID."},
+        ],
+    },
+    {
+        "name": "Simulated Cloud Operations",
+        "description": "Free simulated cloud operations service for testing agents: list instances, start, stop, and inspect usage without real infrastructure.",
+        "mcp_endpoint": "https://agentstalk.neoned71.com/api/simulator/cloud",
+        "price_atomic": 0,
+        "tool_schemas": [
+            {"name": "list_instances", "description": "List demonstration cloud instances."},
+            {"name": "start_instance", "description": "Simulate starting an instance."},
+            {"name": "stop_instance", "description": "Simulate stopping an instance."},
+            {"name": "get_usage", "description": "Inspect demonstration CPU and usage totals."},
+        ],
+    },
 ]
 
 async def seed_curated_services(session: AsyncSession) -> None:
