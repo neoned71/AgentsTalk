@@ -4,13 +4,14 @@
   const API = import.meta.env.PUBLIC_API_BASE || 'http://localhost:8000';
   let overview = $state(null);
   let analytics = $state(null);
+  let users = $state([]);
   let error = $state(null);
   let loading = $state(true);
 
   async function load() {
     loading = true; error = null;
     try {
-      const [o, a] = await Promise.all([
+      const [o, a, u] = await Promise.all([
         fetch(`${API}/admin/overview`, { credentials: 'include' }).then(async r => {
           if (r.status === 401 || r.status === 403) throw new Error('Admin access required');
           return r.json();
@@ -18,9 +19,14 @@
         fetch(`${API}/analytics/summary?days=7`, { credentials: 'include' }).then(async r => {
           if (r.status === 401 || r.status === 403) throw new Error('Admin access required');
           return r.json();
+        }),
+        fetch(`${API}/admin/users?limit=200`, { credentials: 'include' }).then(async r => {
+          if (r.status === 401 || r.status === 403) throw new Error('Admin access required');
+          const json = await r.json();
+          return Array.isArray(json) ? json : json.users || [];
         })
       ]);
-      overview = o; analytics = a;
+      overview = o; analytics = a; users = u;
     } catch (e) { error = e.message || 'Failed to load admin data'; if (error === 'Admin access required') goto('/'); }
     finally { loading = false; }
   }
@@ -77,6 +83,30 @@
       {/if}
     </section>
   {/if}
+
+    <section class="block">
+      <div class="block-head"><h2>Users</h2><span class="meta">{users.length} shown</span></div>
+      {#if users.length}
+        <div class="table">
+          <table>
+            <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Wallet</th><th>Created</th></tr></thead>
+            <tbody>
+              {#each users as u}
+                <tr>
+                  <td class="mono">{u.email || '—'}</td>
+                  <td>{u.display_name || '—'}</td>
+                  <td><span class="role {u.role}">{u.role}</span></td>
+                  <td class="mono">{u.wallet_address ? u.wallet_address.slice(0, 10) + '…' : '—'}</td>
+                  <td class="meta">{u.created_at ? new Date(u.created_at).toLocaleString() : '—'}</td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
+      {:else}
+        <div class="empty">No users found.</div>
+      {/if}
+    </section>
 </div>
 
 <style>
@@ -100,6 +130,10 @@
   tbody td:first-child { border-radius: 8px 0 0 8px; }
   tbody td:last-child { border-radius: 0 8px 8px 0; }
   .mono { font-family: ui-monospace, SFMono-Regular, monospace; color: #b9c3d1; font-size: 12px; }
+  .role { padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .role.admin { background: rgba(96, 165, 250, .16); color: #60a5fa; }
+  .role.provider { background: rgba(74, 222, 128, .16); color: #4ade80; }
+  .role.consumer { background: rgba(148, 163, 184, .16); color: #cbd5e1; }
   .empty { color: #8b95a5; padding: 22px 2px; }
   .ghost { background: #111725; color: #c8cfda; border: 0; padding: 9px 14px; border-radius: 8px; cursor: pointer; }
   .ghost:disabled { opacity: .55; cursor: default; }
