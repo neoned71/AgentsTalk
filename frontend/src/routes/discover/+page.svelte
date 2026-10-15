@@ -12,6 +12,8 @@
   let probing = $state(false);
   let sortMode = $state('best'); // best (latency) | cheapest
   let latencies = $state({});
+  let browseServices = $state([]);
+  let browseLoading = $state(true);
 
   async function search() {
     if (!query.trim()) return;
@@ -49,6 +51,15 @@
     finally { probing = false; }
   }
 
+  async function loadBrowse() {
+    try {
+      const r = await fetch(`${API}/services?limit=12`, { credentials: 'include' });
+      if (r.ok) browseServices = await r.json();
+      else browseServices = [];
+    } catch (e) { browseServices = []; }
+    finally { browseLoading = false; }
+  }
+
   let sortedResults = $derived(() => {
     const arr = [...results];
     if (sortMode === 'cheapest') {
@@ -65,6 +76,7 @@
   });
 
   $effect(() => { if (q && !loading) { query = q; search(); } });
+  $effect(() => { if (!loading) { loadBrowse(); } });
 
   let bestId = $derived(() => {
     if (sortMode !== 'best') return null;
@@ -84,7 +96,29 @@
     <button class="btn" onclick={search} disabled={loading}>{loading ? 'Searching…' : 'SEARCH'}</button>
   </div>
 
-  {#if error}<p class="warn">{error}</p>{/if}
+  {#if browseLoading}<p class="muted">Loading services…</p>{/if}
+  {#if (!invoked || !results.length) && browseServices.length}
+    <div class="browse-head">
+      <strong>Available services</strong>
+      <span class="meta">{browseServices.length} services</span>
+    </div>
+    <div class="grid">
+      {#each browseServices as r}
+        <a class="card" href={`/service/${r.id}`}>
+          <div class="card-row">
+            <strong>{r.name}</strong>
+            <span class="price">{r.currency} {(r.price_atomic/1e6).toFixed(6)}</span>
+          </div>
+          <p class="card-desc">{r.description}</p>
+          <div class="card-foot">
+            <span class="tag">{r.match_type || 'service'}</span>
+            <span class="tag">available</span>
+          </div>
+        </a>
+      {/each}
+    </div>
+  {/if}
+
 
   {#if results.length}
     <div class="toolbar">

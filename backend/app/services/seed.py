@@ -92,8 +92,37 @@ CURATED_SERVICES: List[Dict[str, Any]] = [
             {"name": "parse_json", "description": "Parse JSON from a fetched response."},
         ],
     },
+    {
+        "name": "Context7 MCP",
+        "description": "Up-to-date library documentation, API examples, and code references for fast developer assistance.",
+        "mcp_endpoint": "https://mcp_curated.agentshub.local/context7",
+        "price_atomic": 1300,
+        "tool_schemas": [
+            {"name": "resolve_library_id", "description": "Resolve a library by name."},
+            {"name": "get_library_docs", "description": "Get focused documentation for a library."},
+        ],
+    },
+    {
+        "name": "Firecrawl MCP",
+        "description": "Web scraping and crawling tools for extracting website content as clean Markdown.",
+        "mcp_endpoint": "https://mcp_curated.agentshub.local/firecrawl",
+        "price_atomic": 1700,
+        "tool_schemas": [
+            {"name": "scrape_url", "description": "Scrape a URL and return Markdown."},
+            {"name": "crawl_site", "description": "Crawl a website and extract content."},
+        ],
+    },
+    {
+        "name": "Sequential Thinking MCP",
+        "description": "Step-by-step reasoning tools for breaking complex agent tasks into structured thought sequences.",
+        "mcp_endpoint": "https://mcp_curated.agentshub.local/sequential-thinking",
+        "price_atomic": 1400,
+        "tool_schemas": [
+            {"name": "create_thought", "description": "Create a new reasoning step."},
+            {"name": "list_thoughts", "description": "List the current reasoning sequence."},
+        ],
+    },
 ]
-
 
 async def seed_curated_services(session: AsyncSession) -> None:
     pub_res = await session.execute(select(Publisher).where(Publisher.domain == CURATED_DOMAIN))
