@@ -21,26 +21,66 @@ from app.services.x402 import X402Client, X402PaymentRequirements, escrow_releas
 
 
 
-async def _budget_charge_api_key(request: Request, session, amount: int) -> None:
+from datetime import datetime, timezone, timedelta
+
+
+async def _resolve_api_key(request: Request, session) -> Optional[ApiKey]:
     auth = request.headers.get("authorization", "")
     if not auth.lower().startswith("bearer "):
-        return
+        return None
     key = auth[7:].strip()
     if not key.startswith("ak_"):
-        return
+        return None
     prefix = key[:11]
     res = await session.execute(select(ApiKey).where(ApiKey.key_prefix == prefix, ApiKey.revoked.is_(False)))
     ak = res.scalar_one_or_none()
+    if ak is None or __import__("hashlib").sha256(key.encode()).hexdigest() != ak.key_hash:
+        return None
+    return ak
+
+
+def _period_now():
+    return datetime.now(timezone.utc)
+
+
+def _reset_api_key_periods(ak: ApiKey) -> None:
+    now = _period_now()
+    if not ak.spent_reset_daily_at or now >= ak.spent_reset_daily_at:
+        ak.spent_daily_atomic = 0
+        ak.spent_reset_daily_at = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
+    if not ak.spent_reset_weekly_at or now >= ak.spent_reset_weekly_at:
+        ak.spent_weekly_atomic = 0
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        while start.weekday() != 0:
+            start -= timedelta(days=1)
+        ak.spent_reset_weekly_at = start + timedelta(days=7)
+    if not ak.spent_reset_monthly_at or now >= ak.spent_reset_monthly_at:
+        ak.spent_monthly_atomic = 0
+        if now.month == 12:
+            ak.spent_reset_monthly_at = now.replace(year=now.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        else:
+            ak.spent_reset_monthly_at = now.replace(month=now.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0)
+
+
+async def _budget_charge_api_key(request: Request, session, amount: int, service: Optional[Service] = None) -> None:
+    ak = await _resolve_api_key(request, session)
     if ak is None:
         return
-    import hashlib
-    if hashlib.sha256(key.encode()).hexdigest() != ak.key_hash:
-        return
+    if service is not None and ak.free_only and (service.price_atomic or 0) > 0:
+        raise HTTPException(402, "API key is restricted to free services")
+    _reset_api_key_periods(ak)
+    if ak.spend_limit_atomic and (ak.spent_atomic or 0) + amount > ak.spend_limit_atomic:
+        raise HTTPException(402, "API key lifetime spend limit exceeded")
+    if ak.daily_cap_atomic and (ak.spent_daily_atomic or 0) + amount > ak.daily_cap_atomic:
+        raise HTTPException(402, "API key daily budget exceeded")
+    if ak.weekly_cap_atomic and (ak.spent_weekly_atomic or 0) + amount > ak.weekly_cap_atomic:
+        raise HTTPException(402, "API key weekly budget exceeded")
+    if ak.monthly_cap_atomic and (ak.spent_monthly_atomic or 0) + amount > ak.monthly_cap_atomic:
+        raise HTTPException(402, "API key monthly budget exceeded")
     ak.spent_atomic = (ak.spent_atomic or 0) + amount
-    # enforce limit eagerly
-    if ak.spend_limit_atomic and ak.spent_atomic > ak.spend_limit_atomic:
-        # cancel transaction caller will handle; leave marked
-        raise HTTPException(402, "API key spend limit exceeded")
+    ak.spent_daily_atomic = (ak.spent_daily_atomic or 0) + amount
+    ak.spent_weekly_atomic = (ak.spent_weekly_atomic or 0) + amount
+    ak.spent_monthly_atomic = (ak.spent_monthly_atomic or 0) + amount
 
 router = APIRouter(prefix="/calls", tags=["calls"])
 
@@ -50,6 +90,10 @@ async def invoke_service(request: Request, body: CallRequest, user: User = Depen
     svc = await session.get(Service, uuid.UUID(body.service_id))
     if not svc or not svc.active:
         raise HTTPException(404, "service not found")
+
+    api_key = await _resolve_api_key(request, session)
+    if api_key is not None and api_key.free_only and (svc.price_atomic or 0) > 0:
+        raise HTTPException(402, "API key is restricted to free services")
 
     # ---- Credits + receipt branch (web UI) ----
     if getattr(body, "receipt_number", None):
@@ -98,7 +142,7 @@ async def invoke_service(request: Request, body: CallRequest, user: User = Depen
         # platform holds developer share in escrow (already collected from user credits on reservation)
         session.add(CreditTransaction(user_id=user.id, amount_atomic=0, kind="debit",
                                      reference=receipt.id and f"consume:{receipt.receipt_number}"))
-        await _budget_charge_api_key(request, session, svc.price_atomic)
+        await _budget_charge_api_key(request, session, svc.price_atomic, svc)
         await session.commit()
         await session.refresh(call)
         return {
@@ -165,7 +209,7 @@ async def invoke_service(request: Request, body: CallRequest, user: User = Depen
         escrow_release_at=escrow_release_at(),
     )
     session.add(call)
-    await _budget_charge_api_key(request, session, svc.price_atomic)
+    await _budget_charge_api_key(request, session, svc.price_atomic, svc)
     await session.commit()
     await session.refresh(call)
 

@@ -58,6 +58,21 @@ async def lifespan(app: FastAPI):
         END $$;
         """))
         await conn.execute(text("CREATE INDEX IF NOT EXISTS services_tsv_idx ON services USING gin (search_tsv)"))
+        for alter in [
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS free_only boolean NOT NULL DEFAULT false",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spend_limit_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS daily_cap_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS weekly_cap_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS monthly_cap_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spent_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spent_daily_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spent_weekly_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spent_monthly_atomic bigint NOT NULL DEFAULT 0",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spent_reset_daily_at timestamptz NOT NULL DEFAULT now()",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spent_reset_weekly_at timestamptz NOT NULL DEFAULT now()",
+            "ALTER TABLE api_keys ADD COLUMN IF NOT EXISTS spent_reset_monthly_at timestamptz NOT NULL DEFAULT now()",
+        ]:
+            await conn.execute(text(alter))
     async with SessionLocal() as seed_session:
         await seed_curated_services(seed_session)
         await seed_admin_user(seed_session)

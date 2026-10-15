@@ -5,6 +5,10 @@
   let keys = $state([]);
   let name = $state('agent-1');
   let spend = $state('0');
+  let freeOnly = $state(false);
+  let daily = $state('0');
+  let weekly = $state('0');
+  let monthly = $state('0');
   let loading = $state(true);
   let error = $state(null);
   let newKey = $state(null);
@@ -25,7 +29,7 @@
       const r = await fetch(`${API}/keys`, {
         method:'POST', credentials:'include',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ name, spend_limit_atomic: Number(spend) })
+        body: JSON.stringify({ name, free_only: freeOnly, spend_limit_atomic: Number(spend), daily_cap_atomic: Number(daily), weekly_cap_atomic: Number(weekly), monthly_cap_atomic: Number(monthly) })
       });
       const d = await r.json();
       if (!r.ok) throw new Error(JSON.stringify(d));
@@ -48,7 +52,15 @@
     <h3>Create a key</h3>
     <input class="input" bind:value={name} placeholder="key name" />
     <div style="height:8px"></div>
-    <input class="input" bind:value={spend} placeholder="spend limit in USDC atomic (0 = unlimited)" />
+    <input class="input" bind:value={spend} placeholder="lifetime spend limit in USDC atomic (0 = unlimited)" />
+    <div style="height:10px"></div>
+    <label class="perm"><input type="checkbox" bind:checked={freeOnly} /> Free services only (blocks paid calls)</label>
+    <div style="height:10px"></div>
+    <input class="input" bind:value={daily} placeholder="daily budget in USDC atomic (0 = unlimited)" />
+    <div style="height:8px"></div>
+    <input class="input" bind:value={weekly} placeholder="weekly budget in USDC atomic (0 = unlimited)" />
+    <div style="height:8px"></div>
+    <input class="input" bind:value={monthly} placeholder="monthly budget in USDC atomic (0 = unlimited)" />
     <div style="height:12px"></div>
     <button class="btn" onclick={create}>Create key</button>
     {#if newKey}
@@ -68,13 +80,16 @@
     <div class="card">
       <div class="tablewrap">
         <table>
-          <thead><tr><th>Name</th><th>Prefix</th><th>Spent / Limit</th><th>Status</th><th>Action</th></tr></thead>
+          <thead><tr><th>Name</th><th>Prefix</th><th>Scope</th><th>Spent / Limits</th><th>Status</th><th>Action</th></tr></thead>
           <tbody>
             {#each keys as k}
               <tr>
                 <td>{k.name}</td>
                 <td class="mono small">{k.prefix}</td>
-                <td>{(k.spent_atomic/1e6).toFixed(6)} / {k.spend_limit_atomic ? (k.spend_limit_atomic/1e6).toFixed(6) : '∞'}</td>
+                <td>{k.free_only ? 'Free only' : 'All services'}</td>
+                <td>
+                  {((k.spent_atomic||0)/1e6).toFixed(6)} / L:{k.spend_limit_atomic ? (k.spend_limit_atomic/1e6).toFixed(6) : '∞'} D:{k.daily_cap_atomic ? (k.daily_cap_atomic/1e6).toFixed(6) : '∞'} W:{k.weekly_cap_atomic ? (k.weekly_cap_atomic/1e6).toFixed(6) : '∞'} M:{k.monthly_cap_atomic ? (k.monthly_cap_atomic/1e6).toFixed(6) : '∞'}
+                </td>
                 <td><span class="badge {k.revoked?'revoked':'active'}">{k.revoked?'revoked':'active'}</span></td>
                 <td>{#if !k.revoked}<button class="ghostbtn" onclick={() => revoke(k.id)}>Revoke</button>{/if}</td>
               </tr>
@@ -107,5 +122,7 @@
   .emptyico { font-size:32px; margin-bottom:8px; }
   .skel { height:34px; background:linear-gradient(90deg,#121826,#1f2a44,#121826); background-size:200%; animation:shim 1.2s linear infinite; border-radius:8px; margin:10px 0; }
   @keyframes shim { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .perm { color:#cbd5e1; font-size:13px; display:flex; align-items:center; gap:8px; margin:8px 0; }
+  .perm input { width:auto; }
   .container { max-width:960px; margin:0 auto; padding:0 24px; }
 </style>

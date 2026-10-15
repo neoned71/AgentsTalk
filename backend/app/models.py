@@ -104,8 +104,18 @@ class ApiKey(Base):
     name: Mapped[str] = mapped_column(Text, nullable=False)
     key_prefix: Mapped[str] = mapped_column(String(12), nullable=False)
     key_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    free_only: Mapped[bool] = mapped_column(Boolean, default=False)
     spend_limit_atomic: Mapped[int] = mapped_column(BigInteger, default=0)  # 0 = unlimited
+    daily_cap_atomic: Mapped[int] = mapped_column(BigInteger, default=0)
+    weekly_cap_atomic: Mapped[int] = mapped_column(BigInteger, default=0)
+    monthly_cap_atomic: Mapped[int] = mapped_column(BigInteger, default=0)
     spent_atomic: Mapped[int] = mapped_column(BigInteger, default=0)
+    spent_daily_atomic: Mapped[int] = mapped_column(BigInteger, default=0)
+    spent_weekly_atomic: Mapped[int] = mapped_column(BigInteger, default=0)
+    spent_monthly_atomic: Mapped[int] = mapped_column(BigInteger, default=0)
+    spent_reset_daily_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    spent_reset_weekly_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    spent_reset_monthly_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     revoked: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
