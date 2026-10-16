@@ -264,23 +264,23 @@
       </div>
 
       <div class="token-live">
-        <div class="live-row">
-          <div class="live-total">
-            <span class="live-num">{benchWebTokens.toLocaleString()}</span>
-            <span class="live-label">tokens parsed from HTML</span>
-          </div>
-          <div class="live-total accent">
-            <span class="live-num">{benchStructTokens}</span>
-            <span class="live-label">tokens returned by hub</span>
-          </div>
-          <div class="live-total">
-            <span class="live-num">{(100 - (benchStructTokens / Math.max(1, benchWebTokens)) * 100).toFixed(0)}%</span>
-            <span class="live-label">less context in the live check</span>
-          </div>
-        </div>
         <div class="live-note">
           Same representative page, same tool-like lookup. Parsing the whole document burns ~450 ms; the structured call resolves in below 60 ms.
         </div>
+      </div>
+    </div>
+    <div class="live-row below">
+      <div class="live-total">
+        <span class="live-num">{benchWebTokens.toLocaleString()}</span>
+        <span class="live-label">tokens parsed from HTML</span>
+      </div>
+      <div class="live-total accent">
+        <span class="live-num">{benchStructTokens}</span>
+        <span class="live-label">tokens returned by hub</span>
+      </div>
+      <div class="live-total">
+        <span class="live-num">{(100 - (benchStructTokens / Math.max(1, benchWebTokens)) * 100).toFixed(0)}%</span>
+        <span class="live-label">less context in the live check</span>
       </div>
     </div>
 
@@ -654,7 +654,8 @@
   .token-section { position:relative; overflow:hidden; }
   .token-section .lead-plain { max-width:980px; }
   .token-lead { margin-bottom:28px; }
-  .token-board { display:grid; grid-template-columns:minmax(260px, 1.05fr) minmax(280px,.95fr); gap:24px; align-items:stretch; margin:12px 0 32px; }
+  .token-board { display:grid; grid-template-columns:1fr; gap:24px; align-items:stretch; margin:12px 0 24px; }
+  .live-row.below { margin-top:20px; }
   .token-graph { background:linear-gradient(180deg,#05080f, #080b11); padding:18px; border:1px solid #151f2d; min-height:280px; }
   .token-graph svg { width:100%; height:260px; }
   .axes line { stroke:#202b3d; stroke-width:1; }
