@@ -13,6 +13,41 @@
   let copied = $state(false);
   let showcaseServices = $state([]);
   let showcaseLoading = $state(true);
+  const tokenScenarios = [
+    { label: 'Book a ride', detail: 'pickup, ETA, fare, driver, vehicle', web: 15800, hub: 52, webMs: 398, hubMs: 42 },
+    { label: 'Book a hotel', detail: 'rooms, nights, check-in, price, policy', web: 31200, hub: 74, webMs: 912, hubMs: 57 },
+    { label: 'Dentist appointment', detail: 'dentist, slot, patient, notes', web: 10800, hub: 41, webMs: 286, hubMs: 39 },
+    { label: 'Job application', detail: 'role, CV, screening, callback', web: 27400, hub: 63, webMs: 744, hubMs: 53 },
+  ];
+  let tokenVisible = $state(false);
+  let displayWeb = $state(tokenScenarios.map(() => 0));
+  let displayHub = $state(tokenScenarios.map(() => 0));
+  function startTokenAnimation() {
+    const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const duration = 1500;
+    function frame(now) {
+      const progress = Math.min(1, (now - started) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      displayWeb = tokenScenarios.map((s) => Math.round(s.web * eased));
+      displayHub = tokenScenarios.map((s) => Math.round(s.hub * eased));
+      if (progress < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  $effect(() => {
+    if (tokenVisible) startTokenAnimation();
+  });
+  function tokenView(node) {
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && !tokenVisible) {
+          tokenVisible = true;
+        }
+      }
+    }, { threshold: 0.15 });
+    io.observe(node);
+    return { destroy() { io.disconnect(); } };
+  }
   let benchWebBytes = $state(87801);
   let benchWebTokens = $state(0);
   let benchWebMs = $state(0);
@@ -224,6 +259,121 @@
   </div>
 </div>
 
+
+<!-- TOKEN SAVINGS -->
+<section class="section token-section" use:reveal use:tokenView>
+  <div class="container">
+    <div class="section-head">
+      <span class="section-id">01 TOKENS</span>
+      <h2>80% less context by default</h2>
+      <span class="count">{tokenVisible ? 'live benchmark' : 'ready'}</span>
+    </div>
+    <p class="lead-plain token-lead">
+      Instead of making an agent crawl HTML and reason over every tag, script, cookie banner, and irrelevant blog post, AgentsTalk returns one small, priced JSON payload. The same tasks become smaller, faster, and easier to trust.
+    </p>
+
+    <div class="token-board">
+      <div class="token-graph" aria-hidden="true">
+        <svg viewBox="0 0 740 260" role="img" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="web-stroke" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#fca5a5" />
+              <stop offset="100%" stop-color="#fb7185" />
+            </linearGradient>
+            <linearGradient id="hub-stroke" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4ade80" />
+              <stop offset="100%" stop-color="#6ee7b7" />
+            </linearGradient>
+          </defs>
+          <g class="axes">
+            <line x1="44" y1="40" x2="44" y2="220" />
+            <line x1="44" y1="220" x2="718" y2="220" />
+          </g>
+          <g class="labels">
+            <text x="12" y="50">tokens</text>
+            <text x="100" y="240">ride</text>
+            <text x="250" y="240">hotel</text>
+            <text x="410" y="240">dentist</text>
+            <text x="575" y="240">job</text>
+          </g>
+          <path class="graph web-graph" d="M100,110 L250,72 L410,144 L575,60" />
+          <path class="graph hub-graph" d="M100,218 L250,216 L410,219 L575,217" />
+          <circle class="dot web-dot" cx="100" cy="110" r="6" />
+          <circle class="dot web-dot" cx="250" cy="72" r="6" />
+          <circle class="dot web-dot" cx="410" cy="144" r="6" />
+          <circle class="dot web-dot" cx="575" cy="60" r="6" />
+          <circle class="dot hub-dot" cx="100" cy="218" r="5" />
+          <circle class="dot hub-dot" cx="250" cy="216" r="5" />
+          <circle class="dot hub-dot" cx="410" cy="219" r="5" />
+          <circle class="dot hub-dot" cx="575" cy="217" r="5" />
+        </svg>
+      </div>
+
+      <div class="token-live">
+        <div class="live-row">
+          <div class="live-total">
+            <span class="live-num">{benchWebTokens.toLocaleString()}</span>
+            <span class="live-label">tokens parsed from HTML</span>
+          </div>
+          <div class="live-total accent">
+            <span class="live-num">{benchStructTokens}</span>
+            <span class="live-label">tokens returned by hub</span>
+          </div>
+          <div class="live-total">
+            <span class="live-num">{(100 - (benchStructTokens / Math.max(1, benchWebTokens)) * 100).toFixed(0)}%</span>
+            <span class="live-label">less context in the live check</span>
+          </div>
+        </div>
+        <div class="live-note">
+          Same representative page, same tool-like lookup. Parsing the whole document burns ~450 ms; the structured call resolves in below 60 ms.
+        </div>
+      </div>
+    </div>
+
+    <div class="workflow-grid">
+      {#each tokenScenarios as scenario, i}
+        {@const pct = (scenario.hub / scenario.web * 100).toFixed(1)}
+        {@const saved = (100 - (scenario.hub / scenario.web) * 100).toFixed(1)}
+        <article class="workflow" class:show={tokenVisible} style="--delay:{i * 120}ms">
+          <div class="workflow-head">
+            <div>
+              <h3>{scenario.label}</h3>
+              <p>{scenario.detail}</p>
+            </div>
+            <span class="save-pill">-{saved}% tokens</span>
+          </div>
+          <div class="bars">
+            <div class="bar-track">
+              <span class="bar-label">Web crawl</span>
+              <div class="bar">
+                <span class="fill web" style="width:{tokenVisible ? 100 : 3}%"></span>
+              </div>
+              <span class="metric">{displayWeb[i].toLocaleString()} tok · {scenario.webMs} ms</span>
+            </div>
+            <div class="bar-track">
+              <span class="bar-label">AgentsTalk</span>
+              <div class="bar">
+                <span class="fill hub" style="width:{tokenVisible ? Math.max(3, scenario.hub / scenario.web * 100) : 2}%"></span>
+              </div>
+              <span class="metric">{displayHub[i].toLocaleString()} tok · {scenario.hubMs} ms</span>
+            </div>
+          </div>
+          <div class="workflow-time">
+            <div class="time-card">
+              <strong>{scenario.webMs} ms</strong>
+              <span>crawl and clean HTML</span>
+            </div>
+            <div class="time-card accent">
+              <strong>{scenario.hubMs} ms</strong>
+              <span>direct service call</span>
+            </div>
+          </div>
+        </article>
+      {/each}
+    </div>
+  </div>
+</section>
+
 <!-- SHOWCASE -->
 <section class="section" use:reveal>
   <div class="container">
@@ -415,57 +565,11 @@
   </div>
 </section>
 
-<!-- ECONOMICS -->
-<section class="section" use:reveal>
-  <div class="container">
-    <div class="section-head">
-      <span class="section-id">04</span>
-      <h2>Economics</h2>
-    </div>
-    <div class="econ">
-      <div class="econ-card"><div class="econ-num">98%</div><div class="econ-lbl">provider share</div><p>Per call. No subscriptions, tiers, or minimums.</p></div>
-      <div class="econ-card"><div class="econ-num">2%</div><div class="econ-lbl">platform fee</div><p>Covers embedding, pgvector search, registry, payouts.</p></div>
-      <div class="econ-card"><div class="econ-num">30d</div><div class="econ-lbl">cashback hold</div><p>Every call escrowed a month. Refunds funded from hold.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- PROFIT IN EffiCIENCY / TOKEN BENCHMARK -->
-<section class="section" use:reveal>
-  <div class="container">
-    <div class="section-head">
-      <span class="section-id">05</span>
-      <h2>Token economics vs web crawl</h2>
-      <span class="count">{benchLoading ? '…' : benchStructBytes + ' B vs ' + benchWebBytes + ' B'}</span>
-    </div>
-    <p class="section-sub">
-      One representative service call. Benchmarked across the repeated HTML (document parsing path) and the real JSON response returned by the hub.
-    </p>
-    <div class="bench">
-      <div class="bench-col">
-        <div class="bench-num">{benchLoading ? '…' : benchWebTokens.toLocaleString()}</div>
-        <div class="bench-lbl">Agent crawling webpage HTML</div>
-        <p>{benchWebBytes.toLocaleString()} raw HTML bytes · {benchWebMs} ms · repetitive structure, layout noise, script tags.</p>
-      </div>
-      <div class="bench-col accent">
-        <div class="bench-num">{benchLoading ? '…' : benchStructTokens}</div>
-        <div class="bench-lbl">AgentTalk structured JSON</div>
-        <p>{benchStructBytes} bytes · {benchStructMs} ms · only the fields an agent actually uses.</p>
-      </div>
-      <div class="bench-col">
-        <div class="bench-num">{benchLoading ? '…' : (100 - (benchStructTokens / Math.max(1, benchWebTokens)) * 100).toFixed(0)}%</div>
-        <div class="bench-lbl">fewer context tokens saved</div>
-        <p>Conservative cleaned-DOM path still saves roughly 80% because most of a web page is not relevant data.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- STANDARDS -->
 <section class="section alt" use:reveal>
   <div class="container">
     <div class="section-head">
-      <span class="section-id">06</span>
+      <span class="section-id">04</span>
       <h2>Standards</h2>
     </div>
     <div class="chips">
@@ -544,6 +648,59 @@
   .bench-lbl { color:#8b93a7; font-size:12px; text-transform:uppercase; letter-spacing:.12em; margin-bottom:12px; }
   .bench-col p { color:#94a3b8; font-size:13px; line-height:1.5; margin:0; }
   @media (max-width: 720px) { .bench { grid-template-columns:1fr; } }
+
+
+  .token-section { position:relative; overflow:hidden; }
+  .token-section .lead-plain { max-width:980px; }
+  .token-lead { margin-bottom:28px; }
+  .token-board { display:grid; grid-template-columns:minmax(260px, 1.05fr) minmax(280px,.95fr); gap:24px; align-items:stretch; margin:12px 0 32px; }
+  .token-graph { background:linear-gradient(180deg,#05080f, #080b11); padding:18px; border:1px solid #151f2d; min-height:280px; }
+  .token-graph svg { width:100%; height:260px; }
+  .axes line { stroke:#202b3d; stroke-width:1; }
+  .labels text { fill:#64748b; font-family:ui-monospace, SFMono-Regular, monospace; font-size:12px; }
+  .graph { fill:none; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+  .web-graph { stroke:url(#web-stroke); stroke-dasharray:1000; stroke-dashoffset:1000; transition:stroke-dashoffset 1.6s ease-out; }
+  .hub-graph { stroke:url(#hub-stroke); stroke-dasharray:1000; stroke-dashoffset:1000; transition:stroke-dashoffset 1.8s ease-out .2s; }
+  .token-section.revealed .web-graph, .token-section.revealed .hub-graph { stroke-dashoffset:0; }
+  .dot { opacity:0; transition:opacity .35s ease, transform .35s ease; }
+  .token-section.revealed .dot { opacity:1; }
+  .web-dot { fill:#fb7185; }
+  .hub-dot { fill:#4ade80; }
+  .token-live { background:#080b11; padding:22px; border:1px solid #151f2d; }
+  .live-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .live-total { display:flex; flex-direction:column; gap:6px; padding:14px; background:#070c14; }
+  .live-total.accent { border:1px solid #4ade80; }
+  .live-num { font-family:ui-monospace, SFMono-Regular, monospace; font-size:clamp(22px,3vw,34px); font-weight:700; color:#e2e8f0; }
+  .live-total.accent .live-num { color:#4ade80; }
+  .live-label { color:#64748b; font-size:11px; text-transform:uppercase; letter-spacing:.11em; }
+  .live-note { margin-top:16px; color:#94a3b8; font-size:13px; line-height:1.5; }
+  .workflow-grid { display:grid; grid-template-columns:repeat(2,minmax(260px,1fr)); gap:18px; }
+  .workflow { background:#080b11; padding:20px; border:1px solid #151f2d; opacity:0; transform:translateY(24px) scale(.99); transition:transform .7s ease, opacity .7s ease; }
+  .workflow.show { opacity:1; transform:translateY(0) scale(1); transition-delay:var(--delay); }
+  .workflow-head { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:16px; }
+  .workflow-head h3 { margin:0 0 4px; font-size:17px; }
+  .workflow-head p { margin:0; color:#94a3b8; font-size:12px; line-height:1.4; }
+  .save-pill { color:#040609; background:#4ade80; font-family:ui-monospace, SFMono-Regular, monospace; font-size:11px; font-weight:700; padding:4px 8px; white-space:nowrap; }
+  .bars { display:grid; gap:12px; margin:16px 0; }
+  .bar-track { display:grid; grid-template-columns:92px 1fr 132px; gap:10px; align-items:center; }
+  .bar-label { color:#8b93a7; font-size:11px; text-transform:uppercase; letter-spacing:.08em; font-family:ui-monospace, SFMono-Regular, monospace; }
+  .bar { height:11px; background:#070c14; border:1px solid #1b2737; overflow:hidden; }
+  .fill { display:block; height:100%; width:0; transition:width 1.35s cubic-bezier(.16,1,.3,1); }
+  .fill.web { background:linear-gradient(90deg,#fb7185,#fca5a5); }
+  .fill.hub { background:linear-gradient(90deg,#4ade80,#6ee7b7); }
+  .metric { color:#94a3b8; font-size:11px; font-family:ui-monospace, SFMono-Regular, monospace; text-align:right; }
+  .workflow-time { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .time-card { background:#070c14; padding:12px; border:1px solid #1b2737; }
+  .time-card strong { display:block; font-family:ui-monospace, SFMono-Regular, monospace; font-size:15px; color:#e2e8f0; margin-bottom:4px; }
+  .time-card span { color:#64748b; font-size:11px; }
+  .time-card.accent { border-color:#4ade80; }
+  .time-card.accent strong { color:#4ade80; }
+  @media (max-width: 880px) {
+    .token-board { grid-template-columns:1fr; }
+    .live-row { grid-template-columns:1fr; }
+    .workflow-grid { grid-template-columns:1fr; }
+    .bar-track { grid-template-columns:78px 1fr 120px; }
+  }
 
   .cols3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
   .stat-card { background:#080b11; padding:20px; }
