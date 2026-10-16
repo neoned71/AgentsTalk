@@ -214,52 +214,6 @@
 </section>
 
 
-<div class="container">
-  <div class="integrate">
-    <div class="integrate-head">QUICK INTEGRATE · PICK YOUR TOOL (10 TARGETS)</div>
-    <div class="tool-tabs">
-      {#each tools as t}
-        <button class="tool-tab" class:active={activeTool === t.id} type="button"
-                onclick={() => activeTool = t.id}>
-          <img class="tool-icon" src={iconMap[t.id] || '/icons/mcp.svg'} alt="" width="15" height="15" />
-          {t.name}
-        </button>
-      {/each}
-    </div>
-
-    <section class="guide-card">
-      <h3><img class="tool-icon" src={iconMap[activeTool] || '/icons/mcp.svg'} alt="" width="16" height="16" />{guide?.name}</h3>
-      <p class="guide-desc">{guide?.description}</p>
-      <ol class="guide-steps">
-        {#each guide?.steps ?? [] as step}
-          <li>{step}</li>
-        {/each}
-      </ol>
-      <p class="guide-env"><strong>Required:</strong> {guide?.env}</p>
-    </section>
-
-    <div class="integrate-code-shell">
-      <div class="code-head">
-        <span class="code-title">{tools.find(t => t.id === activeTool)?.name || activeTool}</span>
-        <button class="copy-btn" type="button" onclick={copyGuide}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2"/>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          {copied ? 'Copied' : 'Copy'}
-        </button>
-      </div>
-      <pre class="integrate-code"><code>{snippet}</code></pre>
-    </div>
-    <p class="integrate-note">
-      Hosted guide: <code>docs/DOCUMENTATION.md</code> plus reproducible files under
-      <code>frontend/static/integrations/&lt;tab&gt;.txt</code>.
-    </p>
-  </div>
-</div>
-
-
 <!-- TOKEN SAVINGS -->
 <section class="section token-section" use:reveal use:tokenView>
   <div class="container">
@@ -373,6 +327,53 @@
     </div>
   </div>
 </section>
+
+
+<div class="container">
+  <div class="integrate">
+    <div class="integrate-head">QUICK INTEGRATE · PICK YOUR TOOL (10 TARGETS)</div>
+    <div class="tool-tabs">
+      {#each tools as t}
+        <button class="tool-tab" class:active={activeTool === t.id} type="button"
+                onclick={() => activeTool = t.id}>
+          <img class="tool-icon" src={iconMap[t.id] || '/icons/mcp.svg'} alt="" width="15" height="15" />
+          {t.name}
+        </button>
+      {/each}
+    </div>
+
+    <section class="guide-card">
+      <h3><img class="tool-icon" src={iconMap[activeTool] || '/icons/mcp.svg'} alt="" width="16" height="16" />{guide?.name}</h3>
+      <p class="guide-desc">{guide?.description}</p>
+      <ol class="guide-steps">
+        {#each guide?.steps ?? [] as step}
+          <li>{step}</li>
+        {/each}
+      </ol>
+      <p class="guide-env"><strong>Required:</strong> {guide?.env}</p>
+    </section>
+
+    <div class="integrate-code-shell">
+      <div class="code-head">
+        <span class="code-title">{tools.find(t => t.id === activeTool)?.name || activeTool}</span>
+        <button class="copy-btn" type="button" onclick={copyGuide}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <pre class="integrate-code"><code>{snippet}</code></pre>
+    </div>
+    <p class="integrate-note">
+      Hosted guide: <code>docs/DOCUMENTATION.md</code> plus reproducible files under
+      <code>frontend/static/integrations/&lt;tab&gt;.txt</code>.
+    </p>
+  </div>
+</div>
+
 
 <!-- SHOWCASE -->
 <section class="section" use:reveal>
@@ -659,10 +660,10 @@
   .axes line { stroke:#202b3d; stroke-width:1; }
   .labels text { fill:#64748b; font-family:ui-monospace, SFMono-Regular, monospace; font-size:12px; }
   .graph { fill:none; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
-  .web-graph { stroke:url(#web-stroke); stroke-dasharray:1000; stroke-dashoffset:1000; transition:stroke-dashoffset 1.6s ease-out; }
-  .hub-graph { stroke:url(#hub-stroke); stroke-dasharray:1000; stroke-dashoffset:1000; transition:stroke-dashoffset 1.8s ease-out .2s; }
+  .web-graph { stroke:url(#web-stroke); stroke-dasharray:1000; stroke-dashoffset:0; transition:stroke-dashoffset 1.6s ease-out; }
+  .hub-graph { stroke:url(#hub-stroke); stroke-dasharray:1000; stroke-dashoffset:0; transition:stroke-dashoffset 1.8s ease-out .2s; }
   .token-section.revealed .web-graph, .token-section.revealed .hub-graph { stroke-dashoffset:0; }
-  .dot { opacity:0; transition:opacity .35s ease, transform .35s ease; }
+  .dot { opacity:1; transition:opacity .35s ease, transform .35s ease; }
   .token-section.revealed .dot { opacity:1; }
   .web-dot { fill:#fb7185; }
   .hub-dot { fill:#4ade80; }
